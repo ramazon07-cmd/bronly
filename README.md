@@ -25,16 +25,3 @@ Ownerlar o‘z restoranlari uchun stol band qilish tizimini boshqaradi, foydalan
 - Deployment: Render / Railway / Docker
 - Version Control: Git + GitHub
 
----
-
-## ⚡ Project Structure
-
-bronly/
-├── manage.py
-├── config/
-├── apps/
-├── templates/
-├── static/
-├── media/
-├── docker/
-└── .gitignore
