@@ -1,0 +1,50 @@
+BRONLY MVP 
+
+🔥 SETUP
+Django project create
+PostgreSQL connect
+Custom User model
+.env configuration
+Git init + first commit
+
+🧱 MODELS
+Restaurant model
+Table model
+Reservation model
+Slug field for restaurant
+Admin panel register models
+
+🔐 AUTH
+Owner registration
+Login / Logout
+Role system (Owner)
+Protect dashboard routes
+
+🍽 RESERVATION LOGIC
+Time slot generator
+Prevent double booking
+Reservation status (pending/confirmed/cancelled)
+Cancel reservation feature
+
+📊 DASHBOARD
+Today's reservations list
+Monthly stats
+Popular time slots
+No-show tracking
+
+🎨 FRONTEND
+Public restaurant page
+Booking form UI
+Success/Error messages
+Mobile responsive layout
+
+💰 SAAS FEATURES
+Subscription model
+Free plan limit
+Payment integration (future)
+
+🌍 DEPLOY
+Production settings
+Gunicorn setup
+Nginx config
+Deploy to Render/Railway
