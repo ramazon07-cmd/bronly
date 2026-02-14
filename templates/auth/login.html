@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - BRONLY{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5 col-lg-4">
+            <div class="card shadow-lg">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-sign-in-alt" style="font-size: 3rem; color: #004E89;"></i>
+                        <h2 class="mt-3">Welcome Back</h2>
+                        <p class="text-muted">Login to your restaurant dashboard</p>
+                    </div>
+
+                    {% if error %}
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <i class="fas fa-exclamation-circle"></i> {{ error }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endif %}
+
+                    <form method="POST" class="login-form" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Username -->
+                        <div class="mb-3">
+                            <label for="username" class="form-label">
+                                <i class="fas fa-user"></i> Username
+                            </label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="username"
+                                name="username"
+                                placeholder="Enter your username"
+                                required
+                                autofocus
+                            >
+                        </div>
+
+                        <!-- Password -->
+                        <div class="mb-4">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock"></i> Password
+                            </label>
+                            <input
+                                type="password"
+                                class="form-control"
+                                id="password"
+                                name="password"
+                                placeholder="Enter your password"
+                                required
+                            >
+                        </div>
+
+                        <!-- Remember Me -->
+                        <div class="form-check mb-4">
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                id="remember"
+                                name="remember"
+                            >
+                            <label class="form-check-label" for="remember">
+                                Remember me on this device
+                            </label>
+                        </div>
+
+                        <!-- Login Button -->
+                        <button type="submit" class="btn btn-secondary w-100 btn-lg mb-3">
+                            <i class="fas fa-arrow-right"></i> Login
+                        </button>
+                    </form>
+
+                    <hr>
+
+                    <!-- Registration Link -->
+                    <div class="text-center">
+                        <p class="text-muted mb-3">Don't have an account yet?</p>
+                        <a href="{% url 'register_owner' %}" class="btn btn-primary w-100">
+                            <i class="fas fa-user-plus"></i> Create One Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Help Text -->
+            <div class="mt-4 text-center">
+                <p class="text-muted small">
+                    <i class="fas fa-info-circle"></i>
+                    Contact support@bronly.com if you need help
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirm Delete - BRONLY{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card border-danger shadow-lg">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 4rem; color: #D62828;"></i>
+                        <h2 class="mt-3 text-danger">Are you sure?</h2>
+                    </div>
+
+                    <div class="alert alert-warning mb-4">
+                        <h5>This action cannot be undone</h5>
+                        <p class="mb-0">
+                            All associated data will be permanently deleted from our system.
+                        </p>
+                    </div>
+
+                    {% if restaurant %}
+                        <div class="card bg-light mb-4">
+                            <div class="card-body">
+                                <p class="mb-1">
+                                    <strong>Restaurant:</strong>
+                                </p>
+                                <p style="font-size: 1.2rem; margin-bottom: 0;">
+                                    <i class="fas fa-store"></i> {{ restaurant.name }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <p class="text-muted mb-4">
+                            <i class="fas fa-info-circle"></i>
+                            Deleting this restaurant will also remove {{ restaurant.tables.count }} table(s) and all associated reservations.
+                        </p>
+
+                        <form method="POST" class="mb-3">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger w-100 btn-lg">
+                                <i class="fas fa-trash-alt"></i> Yes, Delete Permanently
+                            </button>
+                        </form>
+                    {% elif table %}
+                        <div class="card bg-light mb-4">
+                            <div class="card-body">
+                                <p class="mb-1">
+                                    <strong>Table:</strong>
+                                </p>
+                                <p style="font-size: 1.2rem; margin-bottom: 0;">
+                                    <i class="fas fa-chair"></i> {{ table.restaurant.name }} - Table {{ table.table_number }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <p class="text-muted mb-4">
+                            <i class="fas fa-info-circle"></i>
+                            Deleting this table will also remove all associated reservations.
+                        </p>
+
+                        <form method="POST" class="mb-3">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger w-100 btn-lg">
+                                <i class="fas fa-trash-alt"></i> Yes, Delete Table
+                            </button>
+                        </form>
+                    {% endif %}
+
+                    <a href="{% url 'owner_restaurant_list' %}" class="btn btn-secondary w-100 btn-lg">
+                        <i class="fas fa-times-circle"></i> Cancel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

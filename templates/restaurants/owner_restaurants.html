@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}My Restaurants - BRONLY{% endblock %}
+
+{% block content %}
+<div class="container section-padding">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="section-title">
+                <i class="fas fa-store"></i> My Restaurants
+            </h1>
+            <p class="text-muted">Manage all your restaurant listings and table reservations</p>
+        </div>
+        <a href="{% url 'create_restaurant' %}" class="btn btn-primary btn-lg">
+            <i class="fas fa-plus-circle"></i> Add New Restaurant
+        </a>
+    </div>
+
+    {% if restaurants %}
+        <div class="row">
+            {% for restaurant in restaurants %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card restaurant-card h-100">
+                        {% if restaurant.logo %}
+                            <img src="{{ restaurant.logo.url }}" alt="{{ restaurant.name }}" class="card-img-top">
+                        {% else %}
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center">
+                                <i class="fas fa-image" style="font-size: 3rem; color: #ccc;"></i>
+                            </div>
+                        {% endif %}
+
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title mb-0">{{ restaurant.name }}</h5>
+                                <span class="badge {% if restaurant.is_active %}badge-status{% else %}badge-status inactive{% endif %}">
+                                    {% if restaurant.is_active %}Active{% else %}Inactive{% endif %}
+                                </span>
+                            </div>
+
+                            <p class="card-text">
+                                <small class="text-muted">{{ restaurant.get_cuisine_type_display }}</small><br>
+                                <small class="text-muted"><i class="fas fa-map-marker-alt"></i> {{ restaurant.city }}</small>
+                            </p>
+
+                            <div class="mb-3 pb-3 border-bottom">
+                                <small class="text-muted">
+                                    <strong>Tables:</strong> {{ restaurant.tables.count }}
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-white border-top">
+                            <div class="btn-group w-100" role="group">
+                                <a href="{% url 'restaurant_detail' restaurant.id %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                                <a href="{% url 'update_restaurant' restaurant.id %}" class="btn btn-sm btn-outline-secondary">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <a href="{% url 'delete_restaurant' restaurant.id %}" class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash"></i> Delete
+                                </a>
+                            </div>
+
+                            <a href="#" class="btn btn-sm btn-primary w-100 mt-2">
+                                <i class="fas fa-table"></i> Manage Tables
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- Empty State -->
+        <div class="empty-state py-5">
+            <i class="fas fa-store"></i>
+            <h3>No restaurants yet</h3>
+            <p class="text-muted mb-4">Get started by creating your first restaurant</p>
+            <a href="{% url 'create_restaurant' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-plus-circle"></i> Create Restaurant
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

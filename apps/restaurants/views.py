@@ -152,6 +152,10 @@ def create_restaurant(request):
             errors.append('Opening and closing times are required.')
 
         if not errors:
+            # Handle file uploads
+            logo = request.FILES.get('logo')
+            cover_image = request.FILES.get('cover_image')
+
             restaurant = Restaurant.objects.create(
                 owner=request.user,
                 name=name,
@@ -165,6 +169,8 @@ def create_restaurant(request):
                 postal_code=postal_code,
                 opening_time=opening_time,
                 closing_time=closing_time,
+                logo=logo if logo else None,
+                cover_image=cover_image if cover_image else None,
             )
             return redirect('owner_restaurant_list')
 
@@ -199,6 +205,12 @@ def update_restaurant(request, restaurant_id):
         restaurant.postal_code = request.POST.get('postal_code', '').strip() or restaurant.postal_code
         restaurant.opening_time = request.POST.get('opening_time', '').strip() or restaurant.opening_time
         restaurant.closing_time = request.POST.get('closing_time', '').strip() or restaurant.closing_time
+
+        # Handle file uploads
+        if 'logo' in request.FILES:
+            restaurant.logo = request.FILES['logo']
+        if 'cover_image' in request.FILES:
+            restaurant.cover_image = request.FILES['cover_image']
 
         restaurant.save()
         return redirect('owner_restaurant_list')

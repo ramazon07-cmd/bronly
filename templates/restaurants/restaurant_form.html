@@ -1,0 +1,282 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if is_edit %}Edit Restaurant{% else %}Create Restaurant{% endif %} - BRONLY{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white p-4">
+                    <h2 class="mb-0">
+                        {% if is_edit %}
+                            <i class="fas fa-edit"></i> Edit Restaurant
+                        {% else %}
+                            <i class="fas fa-plus-circle"></i> Create New Restaurant
+                        {% endif %}
+                    </h2>
+                </div>
+
+                <div class="card-body p-4">
+                    {% if errors %}
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <strong>Please fix the following errors:</strong>
+                            <ul class="mb-0 mt-2">
+                                {% for error in errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endif %}
+
+                    <form method="POST" enctype="multipart/form-data" class="restaurant-form" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Basic Information -->
+                        <h5 class="subsection-title">
+                            <i class="fas fa-info-circle"></i> Basic Information
+                        </h5>
+
+                        <div class="form-grid">
+                            <!-- Name -->
+                            <div>
+                                <label for="name" class="form-label">
+                                    <i class="fas fa-heading"></i> Restaurant Name *
+                                </label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="name"
+                                    name="name"
+                                    placeholder="e.g., Luigi's Trattoria"
+                                    value="{% if restaurant %}{{ restaurant.name }}{% endif %}"
+                                    required
+                                >
+                            </div>
+
+                            <!-- Cuisine Type -->
+                            <div>
+                                <label for="cuisine_type" class="form-label">
+                                    <i class="fas fa-utensils"></i> Cuisine Type *
+                                </label>
+                                <select class="form-select" id="cuisine_type" name="cuisine_type" required>
+                                    <option value="">Select a cuisine type</option>
+                                    {% for value, label in cuisine_choices %}
+                                        <option value="{{ value }}" {% if restaurant.cuisine_type == value %}selected{% endif %}>
+                                            {{ label }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3 mt-3">
+                            <label for="description" class="form-label">
+                                <i class="fas fa-align-left"></i> Description
+                            </label>
+                            <textarea
+                                class="form-control"
+                                id="description"
+                                name="description"
+                                rows="3"
+                                placeholder="Tell customers about your restaurant..."
+                            >{% if restaurant %}{{ restaurant.description }}{% endif %}</textarea>
+                        </div>
+
+                        <!-- Contact Information -->
+                        <h5 class="subsection-title mt-4">
+                            <i class="fas fa-phone"></i> Contact Information
+                        </h5>
+
+                        <div class="form-grid">
+                            <div>
+                                <label for="phone" class="form-label">
+                                    <i class="fas fa-phone"></i> Phone *
+                                </label>
+                                <input
+                                    type="tel"
+                                    class="form-control"
+                                    id="phone"
+                                    name="phone"
+                                    placeholder="+1 (555) 123-4567"
+                                    value="{% if restaurant %}{{ restaurant.phone }}{% endif %}"
+                                    required
+                                >
+                            </div>
+
+                            <div>
+                                <label for="email" class="form-label">
+                                    <i class="fas fa-envelope"></i> Email *
+                                </label>
+                                <input
+                                    type="email"
+                                    class="form-control"
+                                    id="email"
+                                    name="email"
+                                    placeholder="contact@restaurant.com"
+                                    value="{% if restaurant %}{{ restaurant.email }}{% endif %}"
+                                    required
+                                >
+                            </div>
+
+                            <div>
+                                <label for="website" class="form-label">
+                                    <i class="fas fa-globe"></i> Website
+                                </label>
+                                <input
+                                    type="url"
+                                    class="form-control"
+                                    id="website"
+                                    name="website"
+                                    placeholder="https://www.restaurant.com"
+                                    value="{% if restaurant %}{{ restaurant.website }}{% endif %}"
+                                >
+                            </div>
+                        </div>
+
+                        <!-- Location Information -->
+                        <h5 class="subsection-title mt-4">
+                            <i class="fas fa-map-marker-alt"></i> Location Information
+                        </h5>
+
+                        <div class="mb-3">
+                            <label for="address" class="form-label">
+                                <i class="fas fa-map"></i> Address *
+                            </label>
+                            <textarea
+                                class="form-control"
+                                id="address"
+                                name="address"
+                                rows="2"
+                                placeholder="123 Main Street"
+                                required
+                            >{% if restaurant %}{{ restaurant.address }}{% endif %}</textarea>
+                        </div>
+
+                        <div class="form-grid">
+                            <div>
+                                <label for="city" class="form-label">
+                                    <i class="fas fa-city"></i> City *
+                                </label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="city"
+                                    name="city"
+                                    placeholder="New York"
+                                    value="{% if restaurant %}{{ restaurant.city }}{% endif %}"
+                                    required
+                                >
+                            </div>
+
+                            <div>
+                                <label for="postal_code" class="form-label">
+                                    <i class="fas fa-envelope"></i> Postal Code
+                                </label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="postal_code"
+                                    name="postal_code"
+                                    placeholder="10001"
+                                    value="{% if restaurant %}{{ restaurant.postal_code }}{% endif %}"
+                                >
+                            </div>
+                        </div>
+
+                        <!-- Operating Hours -->
+                        <h5 class="subsection-title mt-4">
+                            <i class="fas fa-clock"></i> Operating Hours
+                        </h5>
+
+                        <div class="form-grid">
+                            <div>
+                                <label for="opening_time" class="form-label">
+                                    <i class="fas fa-sign-in-alt"></i> Opening Time *
+                                </label>
+                                <input
+                                    type="time"
+                                    class="form-control"
+                                    id="opening_time"
+                                    name="opening_time"
+                                    value="{% if restaurant %}{{ restaurant.opening_time }}{% endif %}"
+                                    required
+                                >
+                            </div>
+
+                            <div>
+                                <label for="closing_time" class="form-label">
+                                    <i class="fas fa-sign-out-alt"></i> Closing Time *
+                                </label>
+                                <input
+                                    type="time"
+                                    class="form-control"
+                                    id="closing_time"
+                                    name="closing_time"
+                                    value="{% if restaurant %}{{ restaurant.closing_time }}{% endif %}"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+                        <!-- Media -->
+                        <h5 class="subsection-title mt-4">
+                            <i class="fas fa-images"></i> Media
+                        </h5>
+
+                        <div class="form-grid">
+                            <div>
+                                <label for="logo" class="form-label">
+                                    <i class="fas fa-image"></i> Logo
+                                </label>
+                                <input
+                                    type="file"
+                                    class="form-control"
+                                    id="logo"
+                                    name="logo"
+                                    accept="image/*"
+                                >
+                                {% if restaurant.logo %}
+                                    <small class="text-muted">Current: <a href="{{ restaurant.logo.url }}" target="_blank">View Logo</a></small>
+                                {% endif %}
+                            </div>
+
+                            <div>
+                                <label for="cover_image" class="form-label">
+                                    <i class="fas fa-image"></i> Cover Image
+                                </label>
+                                <input
+                                    type="file"
+                                    class="form-control"
+                                    id="cover_image"
+                                    name="cover_image"
+                                    accept="image/*"
+                                >
+                                {% if restaurant.cover_image %}
+                                    <small class="text-muted">Current: <a href="{{ restaurant.cover_image.url }}" target="_blank">View Cover</a></small>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-2 mt-5">
+                            <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
+                                {% if is_edit %}
+                                    <i class="fas fa-save"></i> Save Changes
+                                {% else %}
+                                    <i class="fas fa-plus-circle"></i> Create Restaurant
+                                {% endif %}
+                            </button>
+                            <a href="{% url 'owner_restaurant_list' %}" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

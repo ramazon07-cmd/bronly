@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if is_edit %}Edit Table{% else %}Add Table{% endif %} - BRONLY{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white p-4">
+                    <h2 class="mb-0">
+                        {% if is_edit %}
+                            <i class="fas fa-edit"></i> Edit Table
+                        {% else %}
+                            <i class="fas fa-plus-circle"></i> Add New Table
+                        {% endif %}
+                    </h2>
+                </div>
+
+                <div class="card-body p-4">
+                    {% if errors %}
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <strong>Please fix the following errors:</strong>
+                            <ul class="mb-0 mt-2">
+                                {% for error in errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endif %}
+
+                    <!-- Restaurant Info -->
+                    <div class="alert alert-info mb-4">
+                        <i class="fas fa-store"></i>
+                        <strong>Restaurant:</strong>
+                        {% if restaurant %}
+                            {{ restaurant.name }}
+                        {% elif table %}
+                            {{ table.restaurant.name }}
+                        {% endif %}
+                    </div>
+
+                    <form method="POST" class="table-form" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Table Number -->
+                        <div class="mb-3">
+                            <label for="table_number" class="form-label">
+                                <i class="fas fa-chair"></i> Table Number *
+                            </label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="table_number"
+                                name="table_number"
+                                placeholder="e.g., A1, 1, VIP-01"
+                                value="{% if table %}{{ table.table_number }}{% endif %}"
+                                required
+                            >
+                            <small class="text-muted">Can be alphanumeric (A1, Table 1, VIP-Corner, etc.)</small>
+                        </div>
+
+                        <!-- Capacity -->
+                        <div class="mb-3">
+                            <label for="capacity" class="form-label">
+                                <i class="fas fa-users"></i> Seating Capacity *
+                            </label>
+                            <input
+                                type="number"
+                                class="form-control"
+                                id="capacity"
+                                name="capacity"
+                                min="1"
+                                max="20"
+                                placeholder="Number of seats"
+                                value="{% if table %}{{ table.capacity }}{% endif %}"
+                                required
+                            >
+                            <small class="text-muted">1-20 guests</small>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-4">
+                            <label for="description" class="form-label">
+                                <i class="fas fa-align-left"></i> Description (Optional)
+                            </label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="description"
+                                name="description"
+                                placeholder="e.g., Window seat, Corner table, High chair area"
+                                value="{% if table %}{{ table.description }}{% endif %}"
+                            >
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
+                                {% if is_edit %}
+                                    <i class="fas fa-save"></i> Save Changes
+                                {% else %}
+                                    <i class="fas fa-plus-circle"></i> Add Table
+                                {% endif %}
+                            </button>
+                            <a href="{% url 'owner_restaurant_list' %}" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

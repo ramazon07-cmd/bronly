@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Restaurants - BRONLY{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container">
+        <h1><i class="fas fa-utensils"></i> Discover Restaurants</h1>
+        <p>Find and reserve a table at your favorite restaurant</p>
+    </div>
+</div>
+
+<div class="container section-padding">
+    {% if restaurants %}
+        <!-- Restaurant Grid -->
+        <div class="row">
+            {% for restaurant in restaurants %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card restaurant-card h-100">
+                        {% if restaurant.logo %}
+                            <img src="{{ restaurant.logo.url }}" alt="{{ restaurant.name }}" class="card-img-top">
+                        {% else %}
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center">
+                                <i class="fas fa-image" style="font-size: 3rem; color: #ccc;"></i>
+                            </div>
+                        {% endif %}
+
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title">{{ restaurant.name }}</h5>
+                                <span class="badge badge-cuisine">{{ restaurant.get_cuisine_type_display }}</span>
+                            </div>
+
+                            <p class="card-text">
+                                <i class="fas fa-map-marker-alt"></i> {{ restaurant.city }}
+                            </p>
+
+                            {% if restaurant.description %}
+                                <p class="card-text text-muted">{{ restaurant.description|truncatewords:15 }}</p>
+                            {% endif %}
+
+                            <div class="mb-3">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock"></i> {{ restaurant.opening_time|time:"H:i" }} - {{ restaurant.closing_time|time:"H:i" }}
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-white border-top">
+                            <a href="{% url 'restaurant_detail' restaurant.id %}" class="btn btn-primary w-100">
+                                <i class="fas fa-eye"></i> View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+            <nav aria-label="Page navigation" class="mt-5">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1">
+                                <i class="fas fa-angle-double-left"></i> First
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                                <i class="fas fa-angle-left"></i> Previous
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                                Next <i class="fas fa-angle-right"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">
+                                Last <i class="fas fa-angle-double-right"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+            <i class="fas fa-search"></i>
+            <h3>No restaurants found</h3>
+            <p>We couldn't find any restaurants matching your criteria.</p>
+            <a href="{% url 'restaurant_list' %}" class="btn btn-primary">
+                <i class="fas fa-sync-alt"></i> Try again
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
