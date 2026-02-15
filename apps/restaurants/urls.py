@@ -6,11 +6,6 @@ urlpatterns = [
     path('', views.restaurant_list, name='restaurant_list'),
     path('<int:restaurant_id>/', views.restaurant_detail, name='restaurant_detail'),
 
-    # Authentication views
-    path('auth/register/', views.register_owner, name='register_owner'),
-    path('auth/login/', views.login_owner, name='login_owner'),
-    path('auth/logout/', views.logout_owner, name='logout_owner'),
-
     # Owner restaurant management views
     path('owner/restaurants/', views.owner_restaurant_list, name='owner_restaurant_list'),
     path('owner/restaurants/create/', views.create_restaurant, name='create_restaurant'),

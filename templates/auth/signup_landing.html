@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}Choose Your Role - BRONLY{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-body p-5">
+                    <div class="text-center mb-5">
+                        <i class="fas fa-user-circle" style="font-size: 4rem; color: #FF6B35;"></i>
+                        <h2 class="mt-4 mb-2">Join BRONLY</h2>
+                        <p class="text-muted lead">Choose your role to get started</p>
+                    </div>
+
+                    <div class="row gap-4">
+                        <!-- Admin Signup -->
+                        <div class="col-md-4">
+                            <div class="card border-0 h-100 role-card" style="transition: all 0.3s ease;">
+                                <div class="card-body text-center p-4">
+                                    <div class="mb-3">
+                                        <i class="fas fa-crown" style="font-size: 3rem; color: #004E89;"></i>
+                                    </div>
+                                    <h5 class="card-title mb-3">Administrator</h5>
+                                    <p class="text-muted small mb-4">
+                                        Manage the platform, oversee restaurants, and handle system operations
+                                    </p>
+                                    <a href="{% url 'signup_admin' %}" class="btn btn-outline-primary w-100">
+                                        <i class="fas fa-arrow-right"></i> Sign Up as Admin
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Restaurant Owner Signup -->
+                        <div class="col-md-4">
+                            <div class="card border-0 h-100 role-card" style="transition: all 0.3s ease;">
+                                <div class="card-body text-center p-4">
+                                    <div class="mb-3">
+                                        <i class="fas fa-utensils" style="font-size: 3rem; color: #FF6B35;"></i>
+                                    </div>
+                                    <h5 class="card-title mb-3">Restaurant Owner</h5>
+                                    <p class="text-muted small mb-4">
+                                        Own and manage your restaurant, tables, and reservations
+                                    </p>
+                                    <a href="{% url 'signup_restaurant_owner' %}" class="btn btn-primary w-100">
+                                        <i class="fas fa-arrow-right"></i> Sign Up as Owner
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Customer Signup -->
+                        <div class="col-md-4">
+                            <div class="card border-0 h-100 role-card" style="transition: all 0.3s ease;">
+                                <div class="card-body text-center p-4">
+                                    <div class="mb-3">
+                                        <i class="fas fa-user" style="font-size: 3rem; color: #00B4A6;"></i>
+                                    </div>
+                                    <h5 class="card-title mb-3">Customer</h5>
+                                    <p class="text-muted small mb-4">
+                                        Discover restaurants and make table reservations easily
+                                    </p>
+                                    <a href="{% url 'signup_customer' %}" class="btn btn-success w-100">
+                                        <i class="fas fa-arrow-right"></i> Sign Up as Customer
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-5">
+
+                    <!-- Login Link -->
+                    <div class="text-center">
+                        <p class="text-muted mb-3">Already have an account?</p>
+                        <a href="{% url 'login_user' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-sign-in-alt"></i> Login Here
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .role-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+    }
+</style>
+{% endblock %}

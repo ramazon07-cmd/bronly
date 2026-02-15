@@ -1,27 +1,7 @@
 from django.contrib import admin
-from .models import RestaurantOwner, Restaurant, Table
+from .models import Restaurant, Table
 
 
-@admin.register(RestaurantOwner)
-class RestaurantOwnerAdmin(admin.ModelAdmin):
-    list_display = ("username", "email", "phone", "created_at")
-    search_fields = ("username", "email", "first_name", "last_name", "phone")
-    list_filter = ("is_active", "created_at")
-    ordering = ("-created_at",)
-    fieldsets = (
-        ("Personal Info", {
-            "fields": ("username", "first_name", "last_name", "email", "phone")
-        }),
-        ("Permissions", {
-            "fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions"),
-            "classes": ("collapse",)
-        }),
-        ("Important Dates", {
-            "fields": ("last_login", "date_joined", "created_at", "updated_at"),
-            "classes": ("collapse",)
-        }),
-    )
-    readonly_fields = ("created_at", "updated_at", "last_login", "date_joined")
 
 
 class TableInline(admin.TabularInline):

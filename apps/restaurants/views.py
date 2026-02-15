@@ -1,80 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.core.paginator import Paginator
 from django.views.decorators.http import require_http_methods
 
-from .models import RestaurantOwner, Restaurant, Table
+from .models import Restaurant, Table
 
-
-# ============================================================================
-# AUTHENTICATION VIEWS
-# ============================================================================
-
-@require_http_methods(["GET", "POST"])
-def register_owner(request):
-    """Register a new restaurant owner."""
-    if request.method == 'POST':
-        username = request.POST.get('username', '').strip()
-        email = request.POST.get('email', '').strip()
-        password = request.POST.get('password', '').strip()
-        password_confirm = request.POST.get('password_confirm', '').strip()
-        first_name = request.POST.get('first_name', '').strip()
-        last_name = request.POST.get('last_name', '').strip()
-        phone = request.POST.get('phone', '').strip()
-
-        # Basic validation
-        errors = []
-        if not username or not email or not password:
-            errors.append('Username, email, and password are required.')
-        if password != password_confirm:
-            errors.append('Passwords do not match.')
-        if RestaurantOwner.objects.filter(username=username).exists():
-            errors.append('Username already exists.')
-        if RestaurantOwner.objects.filter(email=email).exists():
-            errors.append('Email already registered.')
-
-        if not errors:
-            owner = RestaurantOwner.objects.create_user(
-                username=username,
-                email=email,
-                password=password,
-                first_name=first_name,
-                last_name=last_name,
-                phone=phone,
-            )
-            return redirect('login_owner')
-
-        context = {'errors': errors}
-        return render(request, 'auth/register.html', context)
-
-    return render(request, 'auth/register.html')
-
-
-@require_http_methods(["GET", "POST"])
-def login_owner(request):
-    """Login for restaurant owners."""
-    if request.method == 'POST':
-        username = request.POST.get('username', '').strip()
-        password = request.POST.get('password', '').strip()
-
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('owner_restaurant_list')
-        else:
-            context = {'error': 'Invalid username or password.'}
-            return render(request, 'auth/login.html', context)
-
-    return render(request, 'auth/login.html')
-
-
-@require_http_methods(["GET"])
-def logout_owner(request):
-    """Logout for restaurant owners."""
-    logout(request)
-    return redirect('restaurant_list')
 
 
 # ============================================================================
@@ -115,7 +46,7 @@ def restaurant_detail(request, restaurant_id):
 # RESTAURANT OWNER VIEWS
 # ============================================================================
 
-@login_required(login_url='login_owner')
+@login_required(login_url='login_user')
 @require_http_methods(["GET"])
 def owner_restaurant_list(request):
     """List all restaurants owned by the logged-in user."""
@@ -127,7 +58,7 @@ def owner_restaurant_list(request):
     return render(request, 'restaurants/owner_restaurants.html', context)
 
 
-@login_required(login_url='login_owner')
+@login_required(login_url='login_user')
 @require_http_methods(["GET", "POST"])
 def create_restaurant(request):
     """Create a new restaurant."""
@@ -183,7 +114,7 @@ def create_restaurant(request):
     return render(request, 'restaurants/restaurant_form.html', context)
 
 
-@login_required(login_url='login_owner')
+@login_required(login_url='login_user')
 @require_http_methods(["GET", "POST"])
 def update_restaurant(request, restaurant_id):
     """Update an existing restaurant."""
@@ -223,7 +154,7 @@ def update_restaurant(request, restaurant_id):
     return render(request, 'restaurants/restaurant_form.html', context)
 
 
-@login_required(login_url='login_owner')
+@login_required(login_url='login_user')
 @require_http_methods(["GET", "POST"])
 def delete_restaurant(request, restaurant_id):
     """Delete a restaurant."""
@@ -248,7 +179,7 @@ def delete_restaurant(request, restaurant_id):
 # TABLE OWNER VIEWS
 # ============================================================================
 
-@login_required(login_url='login_owner')
+@login_required(login_url='login_user')
 @require_http_methods(["GET", "POST"])
 def create_table(request, restaurant_id):
     """Create a new table in a restaurant."""
@@ -295,7 +226,7 @@ def create_table(request, restaurant_id):
     return render(request, 'restaurants/table_form.html', context)
 
 
-@login_required(login_url='login_owner')
+@login_required(login_url='login_user')
 @require_http_methods(["GET", "POST"])
 def update_table(request, table_id):
     """Update a table."""
@@ -336,7 +267,7 @@ def update_table(request, table_id):
     return render(request, 'restaurants/table_form.html', context)
 
 
-@login_required(login_url='login_owner')
+@login_required(login_url='login_user')
 @require_http_methods(["GET", "POST"])
 def delete_table(request, table_id):
     """Delete a table."""
