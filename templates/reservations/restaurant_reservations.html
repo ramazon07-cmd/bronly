@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}Restaurant Reservations - BRONLY{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-book"></i> Reservations</h2>
+                    <p class="text-muted">for {{ restaurant.name }}</p>
+                </div>
+                <a href="{% url 'owner_restaurant_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+
+            {% if reservations %}
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Customer</th>
+                                <th>Table</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Guests</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for reservation in reservations %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ reservation.customer.get_full_name|default:reservation.customer.username }}</strong><br>
+                                        <small class="text-muted">{{ reservation.customer.email }}</small>
+                                    </td>
+                                    <td>
+                                        <i class="fas fa-chair"></i> Table {{ reservation.table.table_number }}<br>
+                                        <small class="text-muted">Capacity: {{ reservation.table.capacity }}</small>
+                                    </td>
+                                    <td>{{ reservation.reservation_date|date:"M d, Y" }}</td>
+                                    <td>{{ reservation.reservation_time|time:"H:i" }}</td>
+                                    <td>
+                                        <i class="fas fa-users"></i> {{ reservation.guest_count }}
+                                    </td>
+                                    <td>
+                                        {% if reservation.status == 'pending' %}
+                                            <span class="badge bg-warning text-dark">Pending</span>
+                                        {% elif reservation.status == 'confirmed' %}
+                                            <span class="badge bg-success">Confirmed</span>
+                                        {% elif reservation.status == 'cancelled' %}
+                                            <span class="badge bg-danger">Cancelled</span>
+                                        {% elif reservation.status == 'completed' %}
+                                            <span class="badge bg-info">Completed</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if reservation.status == 'pending' %}
+                                            <small>
+                                                <button class="btn btn-xs btn-success" onclick="alert('Confirm reservation functionality')">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </small>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% if reservation.special_requests %}
+                                    <tr>
+                                        <td colspan="7" class="bg-light">
+                                            <small>
+                                                <strong>Special Requests:</strong> {{ reservation.special_requests }}
+                                            </small>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                {% if page_obj.has_other_pages %}
+                    <nav class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1">First</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                                </li>
+                            {% endif %}
+
+                            <li class="page-item active">
+                                <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                            </li>
+
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+
+            {% else %}
+                <div class="alert alert-info text-center py-5">
+                    <i class="fas fa-info-circle" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3">No Reservations Yet</h5>
+                    <p class="text-muted mb-0">There are no reservations for this restaurant yet</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

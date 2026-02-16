@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - BRONLY{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-5 mb-5">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-danger text-white shadow-lg">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2><i class="fas fa-shield-alt"></i> Admin Dashboard</h2>
+                            <p class="mb-0">System overview and management</p>
+                        </div>
+                        <div style="font-size: 4rem;">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-left border-primary">
+                <div class="card-body text-center">
+                    <h6 class="text-muted mb-2"><i class="fas fa-users"></i> Total Users</h6>
+                    <h3 class="text-primary mb-0">{{ total_users }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-left border-success">
+                <div class="card-body text-center">
+                    <h6 class="text-muted mb-2"><i class="fas fa-utensils"></i> Restaurants</h6>
+                    <h3 class="text-success mb-0">{{ total_restaurants }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-left border-warning">
+                <div class="card-body text-center">
+                    <h6 class="text-muted mb-2"><i class="fas fa-chair"></i> Tables</h6>
+                    <h3 class="text-warning mb-0">{{ total_tables }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-left border-info">
+                <div class="card-body text-center">
+                    <h6 class="text-muted mb-2"><i class="fas fa-calendar"></i> Reservations</h6>
+                    <h3 class="text-info mb-0">{{ total_reservations }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Status -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm bg-light">
+                <div class="card-body">
+                    <div class="alert alert-warning mb-0">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Pending Reservations:</strong> {{ pending_reservations }} reservations awaiting confirmation
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activities -->
+    <div class="row">
+        <!-- Recent Restaurants -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-star"></i> Recently Added Restaurants</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_restaurants %}
+                        <div class="list-group list-group-flush">
+                            {% for restaurant in recent_restaurants %}
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h6 class="mb-1">{{ restaurant.name }}</h6>
+                                            <small class="text-muted">
+                                                Owner: {{ restaurant.owner.get_full_name|default:restaurant.owner.username }}
+                                            </small>
+                                        </div>
+                                        <span class="badge bg-info">{{ restaurant.created_at|date:"M d" }}</span>
+                                    </div>
+                                    <small class="text-muted">{{ restaurant.city }} • {{ restaurant.cuisine_type|title }}</small>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info mb-0">
+                            <i class="fas fa-info-circle"></i> No restaurants added
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Reservations -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-book"></i> Recent Reservations</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_reservations %}
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Customer</th>
+                                        <th>Restaurant</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for reservation in recent_reservations %}
+                                        <tr>
+                                            <td>{{ reservation.customer.get_full_name|default:reservation.customer.username }}</td>
+                                            <td>{{ reservation.table.restaurant.name }}</td>
+                                            <td>
+                                                {% if reservation.status == 'pending' %}
+                                                    <span class="badge bg-warning text-dark">Pending</span>
+                                                {% elif reservation.status == 'confirmed' %}
+                                                    <span class="badge bg-success">Confirmed</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">{{ reservation.status|title }}</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info mb-0">
+                            <i class="fas fa-info-circle"></i> No reservations
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Actions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-tools"></i> Admin Actions</h5>
+                </div>
+                <div class="card-body">
+                    <a href="/admin/" class="btn btn-primary me-2">
+                        <i class="fas fa-cog"></i> Django Admin Panel
+                    </a>
+                    <a href="{% url 'restaurant_list' %}" class="btn btn-outline-primary me-2">
+                        <i class="fas fa-list"></i> View All Restaurants
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

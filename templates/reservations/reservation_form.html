@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}Make a Reservation - BRONLY{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card shadow-lg">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-calendar-alt" style="font-size: 3rem; color: #FF6B35;"></i>
+                        <h2 class="mt-3">Book Your Table</h2>
+                        <p class="text-muted">at {{ restaurant.name }}</p>
+                    </div>
+
+                    {% if errors %}
+                        {% for error in errors %}
+                            <div class="alert alert-danger alert-dismissible fade show">
+                                <i class="fas fa-exclamation-circle"></i> {{ error }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- Table Information -->
+                    <div class="alert alert-info mb-4">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Table {{ table.table_number }}</strong> - Capacity: {{ table.capacity }} guests
+                        {% if table.description %}
+                            <br><small>{{ table.description }}</small>
+                        {% endif %}
+                    </div>
+
+                    <form method="POST" class="reservation-form" novalidate>
+                        {% csrf_token %}
+
+                        <div class="row">
+                            <!-- Reservation Date -->
+                            <div class="col-md-6 mb-3">
+                                <label for="reservation_date" class="form-label">
+                                    <i class="fas fa-calendar"></i> Reservation Date
+                                </label>
+                                <input
+                                    type="date"
+                                    class="form-control"
+                                    id="reservation_date"
+                                    name="reservation_date"
+                                    required
+                                    min="{{ min_date }}"
+                                >
+                            </div>
+
+                            <!-- Reservation Time -->
+                            <div class="col-md-6 mb-3">
+                                <label for="reservation_time" class="form-label">
+                                    <i class="fas fa-clock"></i> Reservation Time
+                                </label>
+                                <input
+                                    type="time"
+                                    class="form-control"
+                                    id="reservation_time"
+                                    name="reservation_time"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+                        <!-- Guest Count -->
+                        <div class="mb-3">
+                            <label for="guest_count" class="form-label">
+                                <i class="fas fa-users"></i> Number of Guests
+                            </label>
+                            <input
+                                type="number"
+                                class="form-control"
+                                id="guest_count"
+                                name="guest_count"
+                                placeholder="e.g., 4"
+                                required
+                                min="1"
+                                max="{{ table.capacity }}"
+                            >
+                            <small class="text-muted">Maximum: {{ table.capacity }} guests</small>
+                        </div>
+
+                        <!-- Special Requests -->
+                        <div class="mb-4">
+                            <label for="special_requests" class="form-label">
+                                <i class="fas fa-sticky-note"></i> Special Requests (Optional)
+                            </label>
+                            <textarea
+                                class="form-control"
+                                id="special_requests"
+                                name="special_requests"
+                                rows="3"
+                                placeholder="e.g., Window seating, high chair needed, dietary restrictions..."
+                            ></textarea>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary w-100 btn-lg mb-2">
+                            <i class="fas fa-check-circle"></i> Confirm Reservation
+                        </button>
+                        <a href="{% url 'restaurant_detail' restaurant.id %}" class="btn btn-outline-secondary w-100">
+                            <i class="fas fa-arrow-left"></i> Back to Restaurant
+                        </a>
+                    </form>
+
+                    <!-- Restaurant Info Card -->
+                    <div class="card mt-4 bg-light border-0">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="fas fa-utensils"></i> {{ restaurant.name }}
+                            </h6>
+                            <p class="mb-2 text-muted">
+                                <i class="fas fa-phone"></i> {{ restaurant.phone }}<br>
+                                <i class="fas fa-envelope"></i> {{ restaurant.email }}<br>
+                                <i class="fas fa-map-marker-alt"></i> {{ restaurant.address }}, {{ restaurant.city }}
+                            </p>
+                            <p class="mb-0 text-muted">
+                                <strong>Hours:</strong> {{ restaurant.opening_time|time:"H:i" }} - {{ restaurant.closing_time|time:"H:i" }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

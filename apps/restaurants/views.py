@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.core.paginator import Paginator
 from django.views.decorators.http import require_http_methods
+from datetime import datetime, timedelta
 
 from .models import Restaurant, Table
 
@@ -277,14 +278,49 @@ def delete_table(request, table_id):
     if table.restaurant.owner_id != request.user.id:
         return HttpResponseForbidden('You do not have permission to delete this table.')
 
-    restaurant_id = table.restaurant_id
-
-    if request.method == 'POST':
-        table.delete()
-        return redirect('owner_restaurant_list')
-
     context = {
         'table': table,
         'confirm_delete': True,
     }
     return render(request, 'restaurants/confirm_delete.html', context)
+
+
+# ============================================================================
+# PUBLIC RESTAURANT MENU & RESERVATION ROUTES
+# ============================================================================
+
+@require_http_methods(["GET"])
+def restaurant_menu(request, restaurant_slug):
+    """View restaurant menu via QR code."""
+    restaurant = get_object_or_404(Restaurant, slug=restaurant_slug, is_active=True)
+    context = {'restaurant': restaurant}
+    return render(request, 'restaurants/menu.html', context)
+
+
+@require_http_methods(["GET", "POST"])
+def reserve_table(request, restaurant_slug):
+    """Make a reservation at a restaurant."""
+    restaurant = get_object_or_404(Restaurant, slug=restaurant_slug, is_active=True)
+    tables = restaurant.tables.filter(is_active=True).order_by('table_number')
+
+    from apps.reservations.views import create_reservation
+    # Delegate to reservations app
+    context = {'restaurant': restaurant, 'tables': tables}
+    return render(request, 'restaurants/reserve.html', context)
+
+
+@login_required(login_url='auth:login')
+@require_http_methods(["GET"])
+def list_tables(request, restaurant_id):
+    """List tables for a restaurant."""
+    restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+    if restaurant.owner_id != request.user.id:
+        return HttpResponseForbidden('You do not have permission to view this restaurant.')
+
+    tables = restaurant.tables.all().order_by('table_number')
+    context = {'restaurant': restaurant, 'tables': tables}
+    return render(request, 'restaurants/list_tables.html', context)
+
+
+
+

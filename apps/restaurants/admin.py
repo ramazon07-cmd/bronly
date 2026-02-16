@@ -64,3 +64,6 @@ class TableAdmin(admin.ModelAdmin):
             "classes": ("collapse",)
         }),
     )
+
+
+

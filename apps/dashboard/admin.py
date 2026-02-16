@@ -1,3 +1,3 @@
 from django.contrib import admin
 
-# Register your models here.
+# Dashboards don't have their own admin - they aggregate data from other apps

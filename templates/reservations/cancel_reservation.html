@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Cancel Reservation - BRONLY{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-danger shadow-lg">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #DC3545;"></i>
+                        <h3 class="mt-3">Cancel Reservation?</h3>
+                    </div>
+
+                    <!-- Reservation Details -->
+                    <div class="card bg-light border-0 mb-4">
+                        <div class="card-body">
+                            <p class="mb-2">
+                                <strong><i class="fas fa-utensils"></i> Restaurant:</strong><br>
+                                {{ reservation.table.restaurant.name }}
+                            </p>
+                            <p class="mb-2">
+                                <strong><i class="fas fa-chair"></i> Table:</strong><br>
+                                Table {{ reservation.table.table_number }} ({{ reservation.guest_count }} guests)
+                            </p>
+                            <p class="mb-2">
+                                <strong><i class="fas fa-calendar-alt"></i> Date & Time:</strong><br>
+                                {{ reservation.reservation_date|date:"M d, Y" }} at {{ reservation.reservation_time|time:"H:i" }}
+                            </p>
+                            {% if reservation.special_requests %}
+                                <p class="mb-0">
+                                    <strong><i class="fas fa-sticky-note"></i> Special Requests:</strong><br>
+                                    <small>{{ reservation.special_requests }}</small>
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Warning -->
+                    <div class="alert alert-danger mb-4">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Warning:</strong> This action cannot be undone. Your reservation will be marked as cancelled.
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <form method="POST" class="d-grid gap-2">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            <i class="fas fa-trash"></i> Yes, Cancel This Reservation
+                        </button>
+                    </form>
+
+                    <a href="{% url 'customer_reservations' %}" class="btn btn-outline-secondary w-100 mt-2">
+                        <i class="fas fa-arrow-left"></i> Keep My Reservation
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

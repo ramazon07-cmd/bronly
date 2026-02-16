@@ -30,6 +30,7 @@ class Restaurant(models.Model):
         related_name="restaurants"
     )
     name = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=200, unique=True, help_text="URL-friendly identifier for the restaurant")
     description = models.TextField(blank=True)
     cuisine_type = models.CharField(max_length=20, choices=CUISINE_CHOICES)
     phone = models.CharField(max_length=20)
@@ -85,3 +86,6 @@ class Table(models.Model):
 
     def __str__(self):
         return f"Table {self.table_number} - {self.restaurant.name}"
+
+
+

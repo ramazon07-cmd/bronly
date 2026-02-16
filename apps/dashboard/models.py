@@ -1,3 +1,3 @@
 from django.db import models
 
-# Create your models here.
+# Dashboards don't have their own models - they aggregate data from other apps

@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - BRONLY{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-5 mb-5">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-primary text-white shadow-lg">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2><i class="fas fa-user-circle"></i> Welcome, {{ user.first_name|default:user.username }}!</h2>
+                            <p class="mb-0">Here's what's happening with your reservations</p>
+                        </div>
+                        <div style="font-size: 4rem;">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Reservations -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-calendar-check"></i> Upcoming Reservations
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if upcoming_reservations %}
+                        <div class="list-group list-group-flush">
+                            {% for reservation in upcoming_reservations %}
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">{{ reservation.table.restaurant.name }}</h6>
+                                        <small class="badge bg-success">{{ reservation.status|title }}</small>
+                                    </div>
+                                    <p class="mb-1">
+                                        <i class="fas fa-calendar-alt"></i> {{ reservation.reservation_date|date:"M d, Y" }}
+                                        <strong>@</strong> {{ reservation.reservation_time|time:"H:i" }}
+                                    </p>
+                                    <small class="text-muted">
+                                        <i class="fas fa-chair"></i> Table {{ reservation.table.table_number }} •
+                                        <i class="fas fa-users"></i> {{ reservation.guest_count }} guests
+                                    </small>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <a href="{% url 'customer_reservations' %}" class="btn btn-sm btn-outline-success w-100 mt-3">
+                            <i class="fas fa-list"></i> View All Reservations
+                        </a>
+                    {% else %}
+                        <div class="alert alert-info mb-0">
+                            <i class="fas fa-info-circle"></i> No upcoming reservations
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Past Reservations -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history"></i> Past Reservations
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if past_reservations %}
+                        <div class="list-group list-group-flush">
+                            {% for reservation in past_reservations %}
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">{{ reservation.table.restaurant.name }}</h6>
+                                        <small class="badge bg-secondary">Completed</small>
+                                    </div>
+                                    <p class="mb-1">
+                                        <i class="fas fa-calendar-alt"></i> {{ reservation.reservation_date|date:"M d, Y" }}
+                                        <strong>@</strong> {{ reservation.reservation_time|time:"H:i" }}
+                                    </p>
+                                    <small class="text-muted">
+                                        <i class="fas fa-chair"></i> Table {{ reservation.table.table_number }} •
+                                        <i class="fas fa-users"></i> {{ reservation.guest_count }} guests
+                                    </small>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info mb-0">
+                            <i class="fas fa-info-circle"></i> No past reservations yet
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-bolt"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a href="{% url 'restaurant_list' %}" class="btn btn-outline-primary w-100 mb-2">
+                                <i class="fas fa-search"></i> Browse Restaurants
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="{% url 'customer_reservations' %}" class="btn btn-outline-info w-100 mb-2">
+                                <i class="fas fa-list"></i> My Reservations
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
