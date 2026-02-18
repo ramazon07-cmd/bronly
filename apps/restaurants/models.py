@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+from django.utils.text import slugify
+import re
 
 
 class Restaurant(models.Model):
@@ -60,6 +62,25 @@ class Restaurant(models.Model):
     def is_owned_by(self, user):
         """Check if user owns this restaurant (has restaurant_owner_profile)."""
         return self.owner_id == user.id and hasattr(user, 'restaurant_owner_profile')
+
+    def save(self, *args, **kwargs):
+        """Auto-generate unique slug from restaurant name."""
+        if not self.slug:
+            # Generate initial slug from name
+            self.slug = slugify(self.name)
+
+            # Ensure uniqueness
+            original_slug = self.slug
+            counter = 1
+
+            while Restaurant.objects.filter(
+                slug=self.slug
+            ).exclude(pk=self.pk).exists():
+                # Append counter if slug already exists
+                self.slug = f"{original_slug}-{counter}"
+                counter += 1
+
+        super().save(*args, **kwargs)
 
 
 class Table(models.Model):

@@ -12,7 +12,7 @@ from apps.restaurants.models import Restaurant, Table
 # DASHBOARD VIEWS
 # ============================================================================
 
-@login_required(login_url='login_user')
+@login_required(login_url='auth:login')
 @require_http_methods(["GET"])
 def customer_dashboard(request):
     """Customer dashboard showing their reservations and profile."""
@@ -40,7 +40,7 @@ def customer_dashboard(request):
     return render(request, 'dashboards/customer_dashboard.html', context)
 
 
-@login_required(login_url='login_user')
+@login_required(login_url='auth:login')
 @require_http_methods(["GET"])
 def owner_dashboard(request):
     """Restaurant owner dashboard showing their restaurants and reservations."""
@@ -78,7 +78,7 @@ def owner_dashboard(request):
     return render(request, 'dashboards/owner_dashboard.html', context)
 
 
-@login_required(login_url='login_user')
+@login_required(login_url='auth:login')
 @require_http_methods(["GET"])
 def admin_dashboard(request):
     """Admin dashboard showing system statistics."""
@@ -116,7 +116,7 @@ def owner_restaurants(request):
     """List owner's restaurants."""
     restaurants = request.user.restaurants.all().order_by('-created_at')
     context = {'restaurants': restaurants}
-    return render(request, 'dashboard/owner_restaurants.html', context)
+    return render(request, 'dashboards/owner_restaurants.html', context)
 
 
 @login_required(login_url='auth:login')
@@ -124,7 +124,7 @@ def owner_restaurants(request):
 def owner_menu(request):
     """Manage restaurant menu."""
     context = {}
-    return render(request, 'dashboard/owner_menu.html', context)
+    return render(request, 'dashboards/owner_menu.html', context)
 
 
 @login_required(login_url='auth:login')
@@ -132,7 +132,7 @@ def owner_menu(request):
 def owner_orders(request):
     """View restaurant orders."""
     context = {}
-    return render(request, 'dashboard/owner_orders.html', context)
+    return render(request, 'dashboards/owner_orders.html', context)
 
 
 @login_required(login_url='auth:login')
@@ -140,7 +140,7 @@ def owner_orders(request):
 def owner_tables(request):
     """Manage restaurant tables."""
     context = {}
-    return render(request, 'dashboard/owner_tables.html', context)
+    return render(request, 'dashboards/owner_tables.html', context)
 
 
 @login_required(login_url='auth:login')
@@ -148,7 +148,7 @@ def owner_tables(request):
 def owner_analytics(request):
     """View restaurant analytics."""
     context = {}
-    return render(request, 'dashboard/owner_analytics.html', context)
+    return render(request, 'dashboards/owner_analytics.html', context)
 
 
 @login_required(login_url='auth:login')
@@ -156,7 +156,7 @@ def owner_analytics(request):
 def owner_settings(request):
     """Restaurant settings."""
     context = {}
-    return render(request, 'dashboard/owner_settings.html', context)
+    return render(request, 'dashboards/owner_settings.html', context)
 
 
 @login_required(login_url='auth:login')
@@ -164,7 +164,7 @@ def owner_settings(request):
 def owner_subscription(request):
     """Manage subscription."""
     context = {}
-    return render(request, 'dashboard/owner_subscription.html', context)
+    return render(request, 'dashboards/owner_subscription.html', context)
 
 
 @login_required(login_url='auth:login')
@@ -176,7 +176,7 @@ def admin_users(request):
         return HttpResponseForbidden('You do not have permission to access this page.')
 
     context = {}
-    return render(request, 'dashboard/admin_users.html', context)
+    return render(request, 'dashboards/admin_users.html', context)
 
 
 @login_required(login_url='auth:login')
@@ -189,7 +189,7 @@ def admin_restaurants(request):
 
     restaurants = Restaurant.objects.all().order_by('-created_at')
     context = {'restaurants': restaurants}
-    return render(request, 'dashboard/admin_restaurants.html', context)
+    return render(request, 'dashboards/admin_restaurants.html', context)
 
 
 @login_required(login_url='auth:login')
@@ -201,7 +201,7 @@ def admin_orders(request):
         return HttpResponseForbidden('You do not have permission to access this page.')
 
     context = {}
-    return render(request, 'dashboard/admin_orders.html', context)
+    return render(request, 'dashboards/admin_orders.html', context)
 
 
 @login_required(login_url='auth:login')
@@ -213,7 +213,7 @@ def admin_analytics(request):
         return HttpResponseForbidden('You do not have permission to access this page.')
 
     context = {}
-    return render(request, 'dashboard/admin_analytics.html', context)
+    return render(request, 'dashboards/admin_analytics.html', context)
 
 
 @login_required(login_url='auth:login')
@@ -225,5 +225,5 @@ def admin_subscriptions(request):
         return HttpResponseForbidden('You do not have permission to access this page.')
 
     context = {}
-    return render(request, 'dashboard/admin_subscriptions.html', context)
+    return render(request, 'dashboards/admin_subscriptions.html', context)
 

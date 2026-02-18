@@ -37,7 +37,7 @@
 
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'owner_restaurant_list' %}">
+                            <a class="nav-link" href="{% url 'dashboard:customer' %}">
                                 <i class="fas fa-tachometer-alt"></i> Dashboard
                             </a>
                         </li>
@@ -47,7 +47,7 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li>
-                                    <a class="dropdown-item" href="{% url 'logout_user' %}">
+                                    <a class="dropdown-item" href="{% url 'auth:logout' %}">
                                         <i class="fas fa-sign-out-alt"></i> Logout
                                     </a>
                                 </li>
@@ -55,12 +55,12 @@
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'signup_landing' %}">
+                            <a class="nav-link" href="{% url 'auth:register' %}">
                                 <i class="fas fa-user-plus"></i> Register
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login_user' %}">
+                            <a class="nav-link" href="{% url 'auth:login' %}">
                                 <i class="fas fa-sign-in-alt"></i> Login
                             </a>
                         </li>
@@ -100,7 +100,7 @@
                     <h5>Quick Links</h5>
                     <ul class="list-unstyled">
                         <li><a href="{% url 'restaurant_list' %}" class="text-muted text-decoration-none">Browse Restaurants</a></li>
-                        <li><a href="{% url 'signup_landing' %}" class="text-muted text-decoration-none">Become a Partner</a></li>
+                        <li><a href="{% url 'auth:register' %}" class="text-muted text-decoration-none">Become a Partner</a></li>
                     </ul>
                 </div>
                 <div class="col-md-4 mb-4">

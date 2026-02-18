@@ -26,7 +26,7 @@
                                     <p class="text-muted small mb-4">
                                         Manage the platform, oversee restaurants, and handle system operations
                                     </p>
-                                    <a href="{% url 'signup_admin' %}" class="btn btn-outline-primary w-100">
+                                    <a href="{% url 'auth:register_admin' %}" class="btn btn-outline-primary w-100">
                                         <i class="fas fa-arrow-right"></i> Sign Up as Admin
                                     </a>
                                 </div>
@@ -44,7 +44,7 @@
                                     <p class="text-muted small mb-4">
                                         Own and manage your restaurant, tables, and reservations
                                     </p>
-                                    <a href="{% url 'signup_restaurant_owner' %}" class="btn btn-primary w-100">
+                                    <a href="{% url 'auth:register_owner' %}" class="btn btn-primary w-100">
                                         <i class="fas fa-arrow-right"></i> Sign Up as Owner
                                     </a>
                                 </div>
@@ -62,7 +62,7 @@
                                     <p class="text-muted small mb-4">
                                         Discover restaurants and make table reservations easily
                                     </p>
-                                    <a href="{% url 'signup_customer' %}" class="btn btn-success w-100">
+                                    <a href="{% url 'auth:register_customer' %}" class="btn btn-success w-100">
                                         <i class="fas fa-arrow-right"></i> Sign Up as Customer
                                     </a>
                                 </div>
@@ -75,7 +75,7 @@
                     <!-- Login Link -->
                     <div class="text-center">
                         <p class="text-muted mb-3">Already have an account?</p>
-                        <a href="{% url 'login_user' %}" class="btn btn-outline-secondary">
+                        <a href="{% url 'auth:login' %}" class="btn btn-outline-secondary">
                             <i class="fas fa-sign-in-alt"></i> Login Here
                         </a>
                     </div>

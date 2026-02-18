@@ -14,7 +14,7 @@ class TableInline(admin.TabularInline):
 @admin.register(Restaurant)
 class RestaurantAdmin(admin.ModelAdmin):
     inlines = [TableInline]
-    list_display = ("name", "owner", "city", "cuisine_type", "is_active", "created_at")
+    list_display = ("name", "owner", "city", "cuisine_type", "is_active", "created_at", "slug")
     search_fields = ("name", "owner__username", "city", "address")
     list_filter = ("cuisine_type", "is_active", "created_at")
     ordering = ("-created_at",)

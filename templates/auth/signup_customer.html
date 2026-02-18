@@ -159,7 +159,7 @@
                     <!-- Change Role -->
                     <div class="text-center">
                         <p class="text-muted mb-3">Want a different role?</p>
-                        <a href="{% url 'signup_landing' %}" class="btn btn-outline-secondary w-100 mb-2">
+                        <a href="{% url 'auth:register' %}" class="btn btn-outline-secondary w-100 mb-2">
                             <i class="fas fa-arrow-left"></i> Back to Role Selection
                         </a>
                     </div>
@@ -168,7 +168,7 @@
                     <div class="text-center mt-3">
                         <p class="text-muted small">
                             Already have an account?
-                            <a href="{% url 'login_user' %}">Login here</a>
+                            <a href="{% url 'auth:login' %}">Login here</a>
                         </p>
                     </div>
                 </div>

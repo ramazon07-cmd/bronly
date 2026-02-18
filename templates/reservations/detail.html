@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}Reservation Details - BRONLY{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0"><i class="fas fa-ticket-alt"></i> Reservation Details</h4>
+                        <a href="{% url 'reservations:customer_list' %}" class="btn btn-sm btn-light">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <!-- Restaurant Info -->
+                    <section class="mb-4">
+                        <h5 class="border-bottom pb-2">
+                            <i class="fas fa-utensils"></i> Restaurant
+                        </h5>
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <p class="text-muted">Restaurant Name</p>
+                                <p><strong class="h6">{{ reservation.table.restaurant.name }}</strong></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="text-muted">Location</p>
+                                <p><strong class="h6">{{ reservation.table.restaurant.city }}</strong></p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Table Info -->
+                    <section class="mb-4">
+                        <h5 class="border-bottom pb-2">
+                            <i class="fas fa-chair"></i> Table Information
+                        </h5>
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <p class="text-muted">Table Number</p>
+                                <p><strong class="h6">{{ reservation.table.table_number }}</strong></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="text-muted">Table Capacity</p>
+                                <p><strong class="h6">{{ reservation.table.capacity }} guests</strong></p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Reservation Details -->
+                    <section class="mb-4">
+                        <h5 class="border-bottom pb-2">
+                            <i class="fas fa-calendar-alt"></i> Reservation Details
+                        </h5>
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <p class="text-muted">Date</p>
+                                <p><strong class="h6">{{ reservation.reservation_date|date:"D, M d, Y" }}</strong></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="text-muted">Time</p>
+                                <p><strong class="h6">{{ reservation.reservation_time|time:"H:i" }}</strong></p>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <p class="text-muted">Number of Guests</p>
+                                <p><strong class="h6"><i class="fas fa-users"></i> {{ reservation.guest_count }} guests</strong></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="text-muted">Status</p>
+                                <p>
+                                    {% if reservation.status == 'pending' %}
+                                        <span class="badge bg-warning text-dark">Pending</span>
+                                    {% elif reservation.status == 'confirmed' %}
+                                        <span class="badge bg-success">Confirmed</span>
+                                    {% elif reservation.status == 'cancelled' %}
+                                        <span class="badge bg-danger">Cancelled</span>
+                                    {% elif reservation.status == 'completed' %}
+                                        <span class="badge bg-info">Completed</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Special Requests -->
+                    {% if reservation.special_requests %}
+                    <section class="mb-4">
+                        <h5 class="border-bottom pb-2">
+                            <i class="fas fa-sticky-note"></i> Special Requests
+                        </h5>
+                        <div class="alert alert-light mt-3">
+                            <p>{{ reservation.special_requests }}</p>
+                        </div>
+                    </section>
+                    {% endif %}
+
+                    <!-- Actions -->
+                    <section class="mt-5 pt-3 border-top">
+                        {% if reservation.status != 'cancelled' and reservation.status != 'completed' %}
+                            <form method="POST" action="{% url 'reservations:cancel' reservation.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this reservation?')">
+                                    <i class="fas fa-times"></i> Cancel Reservation
+                                </button>
+                            </form>
+                        {% else %}
+                            <p class="text-muted">
+                                <i class="fas fa-info-circle"></i> No actions available for this reservation.
+                            </p>
+                        {% endif %}
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
