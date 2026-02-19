@@ -52,7 +52,7 @@
                                 </div>
                             {% endfor %}
                         </div>
-                        <a href="{% url 'customer_reservations' %}" class="btn btn-sm btn-outline-success w-100 mt-3">
+                        <a href="{% url 'reservations:list' %}" class="btn btn-sm btn-outline-success w-100 mt-3">
                             <i class="fas fa-list"></i> View All Reservations
                         </a>
                     {% else %}
@@ -117,7 +117,7 @@
                             </a>
                         </div>
                         <div class="col-md-6">
-                            <a href="{% url 'customer_reservations' %}" class="btn btn-outline-info w-100 mb-2">
+                            <a href="{% url 'reservations:list' %}" class="btn btn-outline-info w-100 mb-2">
                                 <i class="fas fa-list"></i> My Reservations
                             </a>
                         </div>

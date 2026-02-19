@@ -60,11 +60,10 @@ urlpatterns = [
     path("restaurants/", restaurant_views.restaurant_list, name="restaurant_list"),
 
     # ========================================================================
-    # 7. PUBLIC RESTAURANT ROUTES - MULTI-TENANT (MUST BE LAST!)
-    # /<slug>/, /<slug>/menu/, /<slug>/reserve/, etc.
-    # CRITICAL: Must be last to avoid overriding all routes above
+    # 7. PUBLIC RESTAURANT DETAILS + MENU (MULTI-TENANT BY SLUG)
+    # /<slug>/,  /<slug>/menu/, etc - registered with namespace
     # ========================================================================
-    path("<slug:restaurant_slug>/", include(("apps.restaurants.urls", "restaurants"), namespace="restaurants_public")),
+    path("<slug:restaurant_slug>/", include("apps.restaurants.urls", namespace="restaurants_public")),
 ]
 
 # ============================================================================
