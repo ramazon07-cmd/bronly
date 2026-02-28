@@ -186,7 +186,7 @@ class PublicReservationForm(forms.Form):
         return guest_count
 
     def clean(self):
-        """Perform comprehensive validation including overlap and hours."""
+        """Perform comprehensive validation including time-based overlap detection and hours."""
         cleaned_data = super().clean()
 
         table_id = cleaned_data.get('table_id')
@@ -210,7 +210,7 @@ class PublicReservationForm(forms.Form):
         if guest_count > table.capacity:
             self.add_error(
                 'guest_count',
-                f'This table can accommodate maximum {table.capacity} guests.'
+                f'This table can accommodate maximum {table.capacity} guests. Please select a larger table or reduce guest count.'
             )
 
         # VALIDATION 2: Check restaurant operating hours
@@ -218,24 +218,48 @@ class PublicReservationForm(forms.Form):
         if not (restaurant.opening_time <= reservation_time <= restaurant.closing_time):
             self.add_error(
                 'reservation_time',
-                f'Restaurant operates from {restaurant.opening_time.strftime("%H:%M")} to {restaurant.closing_time.strftime("%H:%M")}.'
+                f'Restaurant operates from {restaurant.opening_time.strftime("%H:%M")} to {restaurant.closing_time.strftime("%H:%M")}. Please select a time within operating hours.'
             )
 
-        # VALIDATION 3: Check for booking overlap (no double-booking)
-        overlap_exists = Reservation.objects.filter(
-            table=table,
-            reservation_date=reservation_date,
-            reservation_time=reservation_time,
-            status__in=['pending', 'confirmed']
-        ).exists()
-
-        if overlap_exists:
+        # VALIDATION 3: Time-based conflict detection (2-hour windows)
+        if not self._check_time_conflicts(table, reservation_date, reservation_time):
             self.add_error(
                 None,  # Non-field error
-                f'Table is already booked for {reservation_time.strftime("%H:%M")} on {reservation_date.strftime("%A, %B %d, %Y")}. Please choose a different time or table.'
+                f'This time slot is not available for Table {table.table_number}. Please choose a different time (2-hour window conflict detected).'
             )
 
         return cleaned_data
+
+    def _check_time_conflicts(self, table, reservation_date, reservation_time):
+        """Check for time-based conflicts using 2-hour windows."""
+        from datetime import datetime, timedelta
+        from django.db.models import Q
+        
+        # Create datetime objects for the new reservation
+        new_reservation_start = datetime.combine(reservation_date, reservation_time)
+        new_reservation_end = new_reservation_start + timedelta(hours=2)
+        
+        # Query existing reservations with time overlap
+        existing_reservations = Reservation.objects.filter(
+            table=table,
+            reservation_date=reservation_date,
+            status__in=['pending', 'confirmed']
+        )
+        
+        # Check each existing reservation for time overlap
+        for existing_reservation in existing_reservations:
+            # Get existing reservation time range
+            existing_start = datetime.combine(
+                existing_reservation.reservation_date,
+                existing_reservation.reservation_time
+            )
+            existing_end = existing_start + timedelta(hours=2)
+            
+            # Check for overlap: (StartA < EndB) and (EndA > StartB)
+            if (new_reservation_start < existing_end) and (new_reservation_end > existing_start):
+                return False  # Conflict found
+        
+        return True  # No conflicts
 
     def save(self, commit=True):
         """Create and return Reservation instance."""

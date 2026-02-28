@@ -41,4 +41,9 @@ urlpatterns = [
     # ========================================================================
     path("restaurant/<int:restaurant_id>/", views.restaurant_reservations, name="restaurant"),
     path("<int:reservation_id>/confirm/", views.confirm_reservation, name="confirm"),
+    
+    # ========================================================================
+    # DEPOSIT ROUTES
+    # ========================================================================
+    path("<int:reservation_id>/deposit/", views.reservation_deposit, name="deposit"),
 ]

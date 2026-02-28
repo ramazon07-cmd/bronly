@@ -9,7 +9,8 @@ from datetime import datetime, timedelta, time
 from decimal import Decimal
 
 from .models import Restaurant, Table
-from .forms import RestaurantForm, TableForm
+from .forms import RestaurantForm, TableForm, PublicReservationForm
+from apps.reservations.models import Reservation
 
 
 # ============================================================================
@@ -195,15 +196,44 @@ def restaurant_list(request):
     return render(request, 'restaurants/restaurant_list.html', context)
 
 
-@require_http_methods(["GET"])
+@require_http_methods(["GET", "POST"])
 def restaurant_detail(request, restaurant_slug):
-    """View public restaurant page with details and tables."""
+    """View public restaurant page with details, tables, and reservation form."""
     restaurant = get_object_or_404(Restaurant, slug=restaurant_slug, is_active=True)
     tables = restaurant.tables.filter(is_active=True).order_by('table_number')
 
+    if request.method == 'POST':
+        if not request.user.is_authenticated:
+            # Redirect to login if not authenticated
+            from django.urls import reverse
+            from urllib.parse import quote
+            next_url = quote(f"/{restaurant_slug}/")
+            return redirect(f"{reverse('auth:login')}?next={next_url}")
+        
+        form = PublicReservationForm(request.POST, restaurant=restaurant)
+        if form.is_valid():
+            # All validation handled by form (date, time, overlap, hours, etc.)
+            reservation = form.save(commit=False)
+            reservation.customer = request.user
+            reservation.save()
+            
+            # Redirect to deposit page
+            return redirect('reservations:deposit', reservation_id=reservation.id)
+        else:
+            # Return with errors
+            context = {
+                'restaurant': restaurant,
+                'tables': tables,
+                'form': form,
+            }
+            return render(request, 'restaurants/restaurant_detail.html', context)
+    
+    # GET request
+    form = PublicReservationForm(restaurant=restaurant) if request.user.is_authenticated else None
     context = {
         'restaurant': restaurant,
         'tables': tables,
+        'form': form,
     }
     return render(request, 'restaurants/restaurant_detail.html', context)
 
@@ -248,7 +278,6 @@ def create_public_reservation(request, restaurant_slug):
     tables = restaurant.tables.filter(is_active=True).order_by('capacity')
 
     if request.method == 'POST':
-        from apps.reservations.models import Reservation
         from .forms import PublicReservationForm
 
         form = PublicReservationForm(request.POST, restaurant=restaurant)

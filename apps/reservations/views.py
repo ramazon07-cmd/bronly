@@ -153,3 +153,29 @@ def confirm_reservation(request, reservation_id):
         'reservations:restaurant_list',
         restaurant_id=reservation.table.restaurant.id
     )
+
+
+@login_required(login_url='auth:login')
+@require_http_methods(["GET"])
+def reservation_deposit(request, reservation_id):
+    """Display reservation details and deposit payment page."""
+    reservation = get_object_or_404(
+        Reservation.objects.select_related('customer', 'table', 'table__restaurant'),
+        id=reservation_id
+    )
+    
+    # Verify permission: customer who made reservation
+    if reservation.customer_id != request.user.id:
+        return HttpResponseForbidden('You do not have permission to view this reservation.')
+    
+    # Calculate deposit amount if not set (for demo purposes, using a simple calculation)
+    if not reservation.deposit_amount:
+        # Set deposit to $20 per person as default
+        reservation.deposit_amount = reservation.guest_count * 20
+        reservation.save()
+    
+    context = {
+        'reservation': reservation,
+        'deposit_amount': reservation.deposit_amount,
+    }
+    return render(request, 'reservations/deposit.html', context)
