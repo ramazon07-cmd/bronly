@@ -42,6 +42,7 @@ urlpatterns = [
     # CUSTOMER DASHBOARD
     # ========================================================================
     path("", views.customer_dashboard, name="customer"),
+    path("settings/", views.customer_settings, name="settings"),
 
     # ========================================================================
     # OWNER DASHBOARD

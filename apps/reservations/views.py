@@ -1,13 +1,17 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, JsonResponse
 from django.core.paginator import Paginator
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Prefetch
+from django.db import transaction
 from datetime import datetime
+import json
 
 from .models import Reservation
 from apps.restaurants.models import Table, Restaurant
+from .forms import AvailabilityCheckForm, ReservationForm
 
 
 # ============================================================================
@@ -179,3 +183,105 @@ def reservation_deposit(request, reservation_id):
         'deposit_amount': reservation.deposit_amount,
     }
     return render(request, 'reservations/deposit.html', context)
+
+
+@csrf_exempt
+@login_required(login_url='auth:login')
+@require_http_methods(["POST"])
+def check_availability_ajax(request):
+    """AJAX endpoint to check table availability in real-time."""
+    try:
+        # Parse JSON data from request
+        data = json.loads(request.body)
+        form_data = {
+            'table_id': data.get('table_id'),
+            'reservation_date': data.get('date'),
+            'reservation_time': data.get('time')
+        }
+        
+        form = AvailabilityCheckForm(data=form_data)
+        if form.is_valid():
+            # If validation passes, the table is available
+            return JsonResponse({
+                'success': True,
+                'available': True,
+                'message': 'Table is available for the selected time.'
+            })
+        else:
+            # Return validation errors
+            return JsonResponse({
+                'success': False,
+                'available': False,
+                'errors': form.errors
+            })
+    
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'error': 'Invalid JSON data'
+        }, status=400)
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
+@csrf_exempt
+@login_required(login_url='auth:login')
+@require_http_methods(["POST"])
+def create_reservation_ajax(request):
+    """AJAX endpoint to create a reservation."""
+    try:
+        # Parse JSON data from request
+        data = json.loads(request.body)
+        
+        # Prepare form data
+        form_data = {
+            'table': data.get('table_id'),
+            'reservation_date': data.get('date'),
+            'reservation_time': data.get('time'),
+            'guest_count': data.get('guest_count', 1),
+            'special_requests': data.get('special_requests', '')
+        }
+        
+        # Create form with restaurant context if available
+        restaurant_id = data.get('restaurant_id')
+        restaurant = None
+        if restaurant_id:
+            try:
+                from apps.restaurants.models import Restaurant
+                restaurant = Restaurant.objects.get(id=restaurant_id)
+            except Restaurant.DoesNotExist:
+                pass
+        
+        form = ReservationForm(data=form_data, restaurant=restaurant)
+        if form.is_valid():
+            with transaction.atomic():
+                reservation = form.save(commit=False)
+                reservation.customer = request.user
+                reservation.save()
+                
+                return JsonResponse({
+                    'success': True,
+                    'reservation_id': reservation.id,
+                    'message': 'Reservation created successfully.',
+                    'redirect_url': f'/reservations/{reservation.id}/deposit/'
+                })
+        else:
+            # Return validation errors
+            return JsonResponse({
+                'success': False,
+                'errors': form.errors
+            })
+    
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'error': 'Invalid JSON data'
+        }, status=400)
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)

@@ -1,153 +1,418 @@
 {% extends 'base.html' %}
 
-{% block title %}Register - BRONLY{% endblock %}
+{% block title %}Sign Up - BRONLY{% endblock %}
+{% block meta_description %}Create your BRONLY account{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth-effects.css' %}">
+<style>
+    .auth-page {
+        min-height: 100vh;
+        display: flex;
+        background: var(--color-bg-primary);
+    }
+    
+    .auth-visual {
+        flex: 1;
+        background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: var(--space-12);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .auth-visual::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 50% 50%, rgba(252, 163, 17, 0.1) 0%, transparent 70%);
+    }
+    
+    .auth-visual-content {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        max-width: 400px;
+    }
+    
+    .auth-visual-logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-3);
+        font-size: var(--text-2xl);
+        font-weight: 800;
+        margin-bottom: var(--space-8);
+    }
+    
+    .auth-visual-logo-icon {
+        width: 48px;
+        height: 48px;
+        background: var(--gradient-accent);
+        border-radius: var(--radius-xl);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .auth-visual-title {
+        font-size: var(--text-4xl);
+        font-weight: 700;
+        margin-bottom: var(--space-4);
+        line-height: 1.2;
+    }
+    
+    .auth-visual-subtitle {
+        font-size: var(--text-lg);
+        color: var(--color-text-secondary);
+    }
+    
+    .auth-form-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: var(--space-8);
+        overflow-y: auto;
+    }
+    
+    .auth-form-wrapper {
+        width: 100%;
+        max-width: 450px;
+    }
+    
+    .step-header {
+        text-align: center;
+        margin-bottom: var(--space-8);
+    }
+    
+    .step-header h1 {
+        font-size: var(--text-3xl);
+        font-weight: 700;
+        margin-bottom: var(--space-2);
+    }
+    
+    .step-header p {
+        color: var(--color-text-secondary);
+    }
+    
+    .form-group {
+        margin-bottom: var(--space-6);
+    }
+    
+    .form-label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: var(--space-2);
+    }
+    
+    .form-input {
+        width: 100%;
+        padding: var(--space-3) var(--space-4);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        background: var(--color-bg-input);
+        transition: all 0.2s ease;
+    }
+    
+    .form-input:focus {
+        outline: none;
+        border-color: var(--color-accent);
+        box-shadow: 0 0 0 3px rgba(252, 163, 17, 0.1);
+    }
+    
+    .btn {
+        width: 100%;
+        padding: var(--space-3) var(--space-4);
+        border: none;
+        border-radius: var(--radius-md);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-primary {
+        background: var(--gradient-accent);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(252, 163, 17, 0.3);
+    }
+    
+    .btn-outline {
+        background: transparent;
+        border: 1px solid var(--color-border);
+        color: var(--color-text-primary);
+    }
+    
+    .btn-outline:hover {
+        border-color: var(--color-accent);
+        color: var(--color-accent);
+    }
+    
+    .auth-footer {
+        text-align: center;
+        margin-top: var(--space-6);
+        color: var(--color-text-secondary);
+    }
+    
+    .auth-footer a {
+        color: var(--color-accent);
+        text-decoration: none;
+        font-weight: 500;
+    }
+    
+    .error-messages {
+        background: var(--color-danger-light);
+        border: 1px solid var(--color-danger);
+        border-radius: var(--radius-md);
+        padding: var(--space-4);
+        margin-bottom: var(--space-6);
+        color: var(--color-danger);
+    }
+    
+    .user-type-selector {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-4);
+        margin-bottom: var(--space-6);
+    }
+    
+    .user-type-option {
+        padding: var(--space-4);
+        border: 2px solid var(--color-border);
+        border-radius: var(--radius-md);
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .user-type-option:hover {
+        border-color: var(--color-accent);
+    }
+    
+    .user-type-option.selected {
+        border-color: var(--color-accent);
+        background: rgba(252, 163, 17, 0.1);
+    }
+    
+    .user-type-icon {
+        font-size: 2rem;
+        margin-bottom: var(--space-2);
+    }
+    
+    @media (max-width: 768px) {
+        .auth-page {
+            flex-direction: column;
+        }
+        
+        .auth-visual {
+            min-height: 300px;
+        }
+        
+        .user-type-selector {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container mt-5 mb-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="card shadow-lg">
-                <div class="card-body p-4">
-                    <div class="text-center mb-4">
-                        <i class="fas fa-user-plus" style="font-size: 3rem; color: #FF6B35;"></i>
-                        <h2 class="mt-3">Create Account</h2>
-                        <p class="text-muted">Join BRONLY as a restaurant partner</p>
+<div class="auth-page">
+    <div class="auth-visual">
+        <div class="auth-visual-content">
+            <div class="auth-visual-logo">
+                <div class="auth-visual-logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                </div>
+                <span>BRONLY</span>
+            </div>
+            <h1 class="auth-visual-title">Join BRONLY</h1>
+            <p class="auth-visual-subtitle">Start protecting your restaurant revenue today</p>
+        </div>
+    </div>
+    
+    <div class="auth-form-container">
+        <div class="auth-form-wrapper">
+            <div class="step-header">
+                <h1>Create Account</h1>
+                <p>Choose your account type and get started</p>
+            </div>
+            
+            {% if form.non_field_errors %}
+                <div class="error-messages">
+                    {% for error in form.non_field_errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            <form method="post" class="auth-form" id="registerForm">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label class="form-label">Account Type</label>
+                    <div class="user-type-selector">
+                        <div class="user-type-option" data-type="customer">
+                            <div class="user-type-icon">👤</div>
+                            <div>Customer</div>
+                            <small>Book restaurant reservations</small>
+                        </div>
+                        <div class="user-type-option" data-type="restaurant_owner">
+                            <div class="user-type-icon">🏪</div>
+                            <div>Restaurant Owner</div>
+                            <small>Manage your restaurant</small>
+                        </div>
                     </div>
-
-                    {% if errors %}
-                        <div class="alert alert-danger alert-dismissible fade show">
-                            <strong>Registration Failed:</strong>
-                            <ul class="mb-0 mt-2">
-                                {% for error in errors %}
-                                    <li>{{ error }}</li>
-                                {% endfor %}
-                            </ul>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <input type="hidden" name="user_type" id="userType" value="customer">
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}
+                        <div class="error-messages">
+                            {% for error in form.first_name.errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
                         </div>
                     {% endif %}
-
-                    <form method="POST" class="register-form" novalidate>
-                        {% csrf_token %}
-
-                        <!-- Username -->
-                        <div class="mb-3">
-                            <label for="username" class="form-label">
-                                <i class="fas fa-user"></i> Username
-                            </label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                id="username"
-                                name="username"
-                                placeholder="Choose a username"
-                                required
-                            >
-                        </div>
-
-                        <!-- Email -->
-                        <div class="mb-3">
-                            <label for="email" class="form-label">
-                                <i class="fas fa-envelope"></i> Email
-                            </label>
-                            <input
-                                type="email"
-                                class="form-control"
-                                id="email"
-                                name="email"
-                                placeholder="your@email.com"
-                                required
-                            >
-                        </div>
-
-                        <!-- Password -->
-                        <div class="mb-3">
-                            <label for="password" class="form-label">
-                                <i class="fas fa-lock"></i> Password
-                            </label>
-                            <input
-                                type="password"
-                                class="form-control"
-                                id="password"
-                                name="password"
-                                placeholder="Min 8 characters (1 uppercase, 1 number)"
-                                required
-                            >
-                            <small class="text-muted">Must be at least 8 characters with 1 uppercase letter and 1 number</small>
-                        </div>
-
-                        <!-- Confirm Password -->
-                        <div class="mb-3">
-                            <label for="password_confirm" class="form-label">
-                                <i class="fas fa-lock"></i> Confirm Password
-                            </label>
-                            <input
-                                type="password"
-                                class="form-control"
-                                id="password_confirm"
-                                name="password_confirm"
-                                placeholder="Confirm your password"
-                                required
-                            >
-                        </div>
-
-                        <!-- First Name -->
-                        <div class="mb-3">
-                            <label for="first_name" class="form-label">
-                                <i class="fas fa-heading"></i> First Name
-                            </label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                id="first_name"
-                                name="first_name"
-                                placeholder="John"
-                            >
-                        </div>
-
-                        <!-- Last Name -->
-                        <div class="mb-3">
-                            <label for="last_name" class="form-label">
-                                <i class="fas fa-heading"></i> Last Name
-                            </label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                id="last_name"
-                                name="last_name"
-                                placeholder="Doe"
-                            >
-                        </div>
-
-                        <!-- Phone -->
-                        <div class="mb-3">
-                            <label for="phone" class="form-label">
-                                <i class="fas fa-phone"></i> Phone (Optional)
-                            </label>
-                            <input
-                                type="tel"
-                                class="form-control"
-                                id="phone"
-                                name="phone"
-                                placeholder="+1 (555) 000-0000"
-                            >
-                        </div>
-
-                        <!-- Submit Button -->
-                        <button type="submit" class="btn btn-primary w-100 btn-lg mt-4">
-                            <i class="fas fa-check-circle"></i> Create Account
-                        </button>
-                    </form>
-
-                    <!-- Login Link -->
-                    <div class="text-center mt-4">
-                        <p class="text-muted">Already have an account?</p>
-                        <a href="{% url 'auth:login' %}" class="btn btn-outline-primary">
-                            <i class="fas fa-sign-in-alt"></i> Login Here
-                        </a>
-                    </div>
                 </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}
+                        <div class="error-messages">
+                            {% for error in form.last_name.errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <div class="error-messages">
+                            {% for error in form.email.errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        <div class="error-messages">
+                            {% for error in form.username.errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.password1.id_for_label }}" class="form-label">Password</label>
+                    {{ form.password1 }}
+                    {% if form.password1.errors %}
+                        <div class="error-messages">
+                            {% for error in form.password1.errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.password2.id_for_label }}" class="form-label">Confirm Password</label>
+                    {{ form.password2 }}
+                    {% if form.password2.errors %}
+                        <div class="error-messages">
+                            {% for error in form.password2.errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Create Account</button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Already have an account? <a href="{% url 'auth:login' %}">Sign in</a></p>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/auth.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // User type selection
+        const userTypeOptions = document.querySelectorAll('.user-type-option');
+        const userTypeInput = document.getElementById('userType');
+        
+        userTypeOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                userTypeOptions.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                userTypeInput.value = this.dataset.type;
+            });
+        });
+        
+        // Add form validation effects
+        const inputs = document.querySelectorAll('.form-input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            
+            input.addEventListener('blur', function() {
+                if (!this.value) {
+                    this.parentElement.classList.remove('focused');
+                }
+            });
+        });
+        
+        // Form submission handling
+        const form = document.getElementById('registerForm');
+        form.addEventListener('submit', function(e) {
+            const submitBtn = form.querySelector('button[type="submit"]');
+            submitBtn.textContent = 'Creating account...';
+            submitBtn.disabled = true;
+        });
+        
+        // Password strength indicator
+        const passwordInput = document.querySelector('input[name="password1"]');
+        if (passwordInput) {
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
+                let strength = 0;
+                
+                if (password.length >= 8) strength++;
+                if (/[A-Z]/.test(password)) strength++;
+                if (/[a-z]/.test(password)) strength++;
+                if (/[0-9]/.test(password)) strength++;
+                if (/[^A-Za-z0-9]/.test(password)) strength++;
+                
+                // You can add visual feedback here based on strength
+            });
+        }
+    });
+</script>
 {% endblock %}

@@ -2,115 +2,459 @@
 
 {% block title %}Restaurants - BRONLY{% endblock %}
 
-{% block content %}
-<!-- Hero Section -->
-<div class="hero-section">
-    <div class="container">
-        <h1><i class="fas fa-utensils"></i> Discover Restaurants</h1>
-        <p>Find and reserve a table at your favorite restaurant</p>
-    </div>
-</div>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    .restaurants-page {
+        padding: var(--space-8);
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .page-header {
+        margin-bottom: var(--space-8);
+        text-align: center;
+    }
+    
+    .page-title {
+        font-size: var(--text-4xl);
+        font-weight: 800;
+        margin-bottom: var(--space-3);
+        background: var(--gradient-accent);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .page-subtitle {
+        font-size: var(--text-xl);
+        color: var(--color-text-secondary);
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .search-filters {
+        background: var(--color-bg-card);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        padding: var(--space-6);
+        margin-bottom: var(--space-8);
+    }
+    
+    .search-bar {
+        display: flex;
+        gap: var(--space-3);
+        margin-bottom: var(--space-4);
+    }
+    
+    .search-input {
+        flex: 1;
+        padding: var(--space-3) var(--space-4);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        background: var(--color-bg-input);
+        font-size: var(--text-base);
+    }
+    
+    .search-input:focus {
+        outline: none;
+        border-color: var(--color-accent);
+        box-shadow: 0 0 0 3px rgba(252, 163, 17, 0.1);
+    }
+    
+    .filter-row {
+        display: flex;
+        gap: var(--space-4);
+        flex-wrap: wrap;
+    }
+    
+    .filter-select {
+        padding: var(--space-2) var(--space-3);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        background: var(--color-bg-input);
+        min-width: 150px;
+    }
+    
+    .restaurants-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: var(--space-6);
+    }
+    
+    .restaurant-card {
+        background: var(--color-bg-card);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .restaurant-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+    }
+    
+    .restaurant-image {
+        height: 200px;
+        background: var(--color-bg-secondary);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .restaurant-image-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: var(--color-text-secondary);
+        font-size: 3rem;
+    }
+    
+    .restaurant-content {
+        padding: var(--space-5);
+    }
+    
+    .restaurant-header {
+        margin-bottom: var(--space-3);
+    }
+    
+    .restaurant-name {
+        font-size: var(--text-xl);
+        font-weight: 700;
+        margin-bottom: var(--space-1);
+        color: var(--color-text-primary);
+    }
+    
+    .restaurant-cuisine {
+        display: inline-block;
+        padding: var(--space-1) var(--space-3);
+        background: rgba(252, 163, 17, 0.1);
+        color: var(--color-accent);
+        border-radius: var(--radius-full);
+        font-size: var(--text-sm);
+        font-weight: 500;
+    }
+    
+    .restaurant-details {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+        margin-bottom: var(--space-4);
+    }
+    
+    .restaurant-detail {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        color: var(--color-text-secondary);
+        font-size: var(--text-sm);
+    }
+    
+    .restaurant-rating {
+        display: flex;
+        align-items: center;
+        gap: var(--space-1);
+        margin-bottom: var(--space-3);
+    }
+    
+    .stars {
+        color: #fbbf24;
+    }
+    
+    .rating-value {
+        font-weight: 600;
+        color: var(--color-text-primary);
+    }
+    
+    .restaurant-actions {
+        display: flex;
+        gap: var(--space-3);
+    }
+    
+    .btn {
+        padding: var(--space-2) var(--space-4);
+        border-radius: var(--radius-md);
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn-primary {
+        background: var(--gradient-accent);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(252, 163, 17, 0.3);
+    }
+    
+    .btn-outline {
+        background: transparent;
+        border: 1px solid var(--color-border);
+        color: var(--color-text-primary);
+    }
+    
+    .btn-outline:hover {
+        border-color: var(--color-accent);
+        color: var(--color-accent);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: var(--space-12);
+        color: var(--color-text-secondary);
+    }
+    
+    .empty-state-icon {
+        font-size: 4rem;
+        margin-bottom: var(--space-4);
+        opacity: 0.5;
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: var(--space-2);
+        margin-top: var(--space-8);
+    }
+    
+    .pagination-btn {
+        padding: var(--space-2) var(--space-4);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        background: var(--color-bg-card);
+        color: var(--color-text-primary);
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    
+    .pagination-btn:hover {
+        background: var(--color-bg-hover);
+    }
+    
+    .pagination-btn.active {
+        background: var(--color-accent);
+        color: white;
+        border-color: var(--color-accent);
+    }
+    
+    @media (max-width: 768px) {
+        .restaurants-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .search-filters {
+            padding: var(--space-4);
+        }
+        
+        .filter-row {
+            flex-direction: column;
+        }
+        
+        .filter-select {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
 
-<div class="container section-padding">
-    {% if restaurants %}
-        <!-- Restaurant Grid -->
-        <div class="row">
+{% block content %}
+<div class="restaurants-page">
+    <div class="page-header">
+        <h1 class="page-title">Discover Restaurants</h1>
+        <p class="page-subtitle">Find the perfect dining experience with secure deposit-based reservations</p>
+    </div>
+    
+    <div class="search-filters">
+        <div class="search-bar">
+            <input type="text" class="search-input" placeholder="Search restaurants..." id="searchInput">
+            <button class="btn btn-primary" id="searchBtn">
+                <i class="fas fa-search"></i>
+                Search
+            </button>
+        </div>
+        
+        <div class="filter-row">
+            <select class="filter-select" id="cuisineFilter">
+                <option value="">All Cuisines</option>
+                <option value="italian">Italian</option>
+                <option value="chinese">Chinese</option>
+                <option value="indian">Indian</option>
+                <option value="mexican">Mexican</option>
+                <option value="japanese">Japanese</option>
+                <option value="french">French</option>
+                <option value="american">American</option>
+                <option value="thai">Thai</option>
+                <option value="korean">Korean</option>
+                <option value="vietnamese">Vietnamese</option>
+                <option value="turkish">Turkish</option>
+                <option value="seafood">Seafood</option>
+                <option value="vegan">Vegan</option>
+                <option value="fusion">Fusion</option>
+            </select>
+            
+            <select class="filter-select" id="sortFilter">
+                <option value="name">Sort by Name</option>
+                <option value="rating">Sort by Rating</option>
+                <option value="created_at">Newest First</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="restaurants-grid" id="restaurantsContainer">
+        {% if restaurants %}
             {% for restaurant in restaurants %}
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card restaurant-card h-100">
-                        {% if restaurant.logo %}
-                            <img src="{{ restaurant.logo.url }}" alt="{{ restaurant.name }}" class="card-img-top">
+                <div class="restaurant-card" data-cuisine="{{ restaurant.cuisine_type }}" data-name="{{ restaurant.name|lower }}">
+                    <div class="restaurant-image">
+                        {% if restaurant.cover_image %}
+                            <img src="{{ restaurant.cover_image.url }}" alt="{{ restaurant.name }}" style="width: 100%; height: 100%; object-fit: cover;">
                         {% else %}
-                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center">
-                                <i class="fas fa-image" style="font-size: 3rem; color: #ccc;"></i>
+                            <div class="restaurant-image-placeholder">
+                                <i class="fas fa-utensils"></i>
                             </div>
                         {% endif %}
-
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h5 class="card-title">{{ restaurant.name }}</h5>
-                                <span class="badge badge-cuisine">{{ restaurant.get_cuisine_type_display }}</span>
+                    </div>
+                    
+                    <div class="restaurant-content">
+                        <div class="restaurant-header">
+                            <h3 class="restaurant-name">{{ restaurant.name }}</h3>
+                            <span class="restaurant-cuisine">{{ restaurant.get_cuisine_type_display }}</span>
+                        </div>
+                        
+                        <div class="restaurant-details">
+                            <div class="restaurant-detail">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>{{ restaurant.city }}, {{ restaurant.postal_code }}</span>
                             </div>
-
-                            <p class="card-text">
-                                <i class="fas fa-map-marker-alt"></i> {{ restaurant.city }}
-                            </p>
-
-                            {% if restaurant.description %}
-                                <p class="card-text text-muted">{{ restaurant.description|truncatewords:15 }}</p>
-                            {% endif %}
-
-                            <div class="mb-3">
-                                <small class="text-muted">
-                                    <i class="fas fa-clock"></i> {{ restaurant.opening_time|time:"H:i" }} - {{ restaurant.closing_time|time:"H:i" }}
-                                </small>
+                            <div class="restaurant-detail">
+                                <i class="fas fa-clock"></i>
+                                <span>{{ restaurant.opening_time|time:"H:i" }} - {{ restaurant.closing_time|time:"H:i" }}</span>
+                            </div>
+                            <div class="restaurant-detail">
+                                <i class="fas fa-phone"></i>
+                                <span>{{ restaurant.phone }}</span>
                             </div>
                         </div>
-
-                        <div class="card-footer bg-white border-top">
-                            <a href="/{{ restaurant.slug }}/" class="btn btn-primary w-100">
-                                <i class="fas fa-eye"></i> View Details
+                        
+                        <div class="restaurant-rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <span class="rating-value">4.5</span>
+                            <span>(128 reviews)</span>
+                        </div>
+                        
+                        <div class="restaurant-actions">
+                            <a href="{% url 'restaurants_public:detail' restaurant.slug %}" class="btn btn-primary">
+                                <i class="fas fa-calendar-check"></i>
+                                Book Table
+                            </a>
+                            <a href="{% url 'restaurants_public:detail' restaurant.slug %}" class="btn btn-outline">
+                                <i class="fas fa-info-circle"></i>
+                                Details
                             </a>
                         </div>
                     </div>
                 </div>
             {% endfor %}
-        </div>
-
-        <!-- Pagination -->
-        {% if page_obj.has_other_pages %}
-            <nav aria-label="Page navigation" class="mt-5">
-                <ul class="pagination justify-content-center">
-                    {% if page_obj.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page=1">
-                                <i class="fas fa-angle-double-left"></i> First
-                            </a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
-                                <i class="fas fa-angle-left"></i> Previous
-                            </a>
-                        </li>
-                    {% endif %}
-
-                    {% for num in page_obj.paginator.page_range %}
-                        {% if page_obj.number == num %}
-                            <li class="page-item active">
-                                <span class="page-link">{{ num }}</span>
-                            </li>
-                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-
-                    {% if page_obj.has_next %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">
-                                Next <i class="fas fa-angle-right"></i>
-                            </a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">
-                                Last <i class="fas fa-angle-double-right"></i>
-                            </a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </nav>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <h3>No Restaurants Found</h3>
+                <p>Try adjusting your search criteria or check back later</p>
+            </div>
         {% endif %}
-    {% else %}
-        <!-- Empty State -->
-        <div class="empty-state">
-            <i class="fas fa-search"></i>
-            <h3>No restaurants found</h3>
-            <p>We couldn't find any restaurants matching your criteria.</p>
-            <a href="{% url 'restaurant_list' %}" class="btn btn-primary">
-                <i class="fas fa-sync-alt"></i> Try again
-            </a>
+    </div>
+    
+    {% if page_obj.has_other_pages %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}" class="pagination-btn">
+                    <i class="fas fa-chevron-left"></i> Previous
+                </a>
+            {% endif %}
+            
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <span class="pagination-btn active">{{ num }}</span>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a href="?page={{ num }}" class="pagination-btn">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+            
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="pagination-btn">
+                    Next <i class="fas fa-chevron-right"></i>
+                </a>
+            {% endif %}
         </div>
     {% endif %}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/restaurants.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const cuisineFilter = document.getElementById('cuisineFilter');
+        const sortFilter = document.getElementById('sortFilter');
+        const restaurantCards = document.querySelectorAll('.restaurant-card');
+        
+        function filterRestaurants() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const cuisineFilterValue = cuisineFilter.value;
+            
+            restaurantCards.forEach(card => {
+                const cuisine = card.dataset.cuisine;
+                const name = card.dataset.name;
+                const matchesSearch = name.includes(searchTerm);
+                const matchesCuisine = !cuisineFilterValue || cuisine === cuisineFilterValue;
+                
+                if (matchesSearch && matchesCuisine) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // Event listeners
+        searchInput.addEventListener('input', filterRestaurants);
+        searchBtn.addEventListener('click', filterRestaurants);
+        cuisineFilter.addEventListener('change', filterRestaurants);
+        sortFilter.addEventListener('change', function() {
+            // Implement sorting logic here
+            console.log('Sorting by:', this.value);
+        });
+        
+        // Add animation to restaurant cards
+        restaurantCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'all 0.5s ease';
+            
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    });
+</script>
 {% endblock %}

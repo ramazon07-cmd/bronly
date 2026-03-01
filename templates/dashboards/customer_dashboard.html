@@ -2,129 +2,477 @@
 
 {% block title %}Dashboard - BRONLY{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    .dashboard {
+        display: flex;
+        min-height: 100vh;
+        background: var(--color-bg-primary);
+    }
+    
+    .sidebar {
+        width: 280px;
+        background: var(--color-bg-secondary);
+        border-right: 1px solid var(--color-border);
+        padding: var(--space-6) 0;
+        position: fixed;
+        height: 100vh;
+        overflow-y: auto;
+        z-index: 100;
+    }
+    
+    .sidebar-header {
+        padding: 0 var(--space-6) var(--space-8);
+        border-bottom: 1px solid var(--color-border);
+        margin-bottom: var(--space-6);
+    }
+    
+    .sidebar-logo {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        font-size: var(--text-xl);
+        font-weight: 700;
+        text-decoration: none;
+        color: var(--color-text-primary);
+    }
+    
+    .sidebar-logo-icon {
+        width: 36px;
+        height: 36px;
+        background: var(--gradient-accent);
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: white;
+    }
+    
+    .sidebar-section {
+        margin-bottom: var(--space-8);
+    }
+    
+    .sidebar-section-title {
+        padding: 0 var(--space-6) var(--space-3);
+        font-size: var(--text-xs);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--color-text-tertiary);
+    }
+    
+    .sidebar-menu {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .sidebar-link {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-3) var(--space-6);
+        text-decoration: none;
+        color: var(--color-text-secondary);
+        transition: all 0.2s ease;
+        border-left: 3px solid transparent;
+    }
+    
+    .sidebar-link:hover {
+        background: var(--color-bg-hover);
+        color: var(--color-text-primary);
+    }
+    
+    .sidebar-link.active {
+        background: var(--color-bg-active);
+        color: var(--color-accent);
+        border-left-color: var(--color-accent);
+    }
+    
+    .sidebar-icon {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .main-content {
+        flex: 1;
+        margin-left: 280px;
+        padding: var(--space-8);
+    }
+    
+    .dashboard-header {
+        margin-bottom: var(--space-8);
+    }
+    
+    .dashboard-title {
+        font-size: var(--text-3xl);
+        font-weight: 700;
+        margin-bottom: var(--space-2);
+    }
+    
+    .dashboard-subtitle {
+        color: var(--color-text-secondary);
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: var(--space-6);
+        margin-bottom: var(--space-8);
+    }
+    
+    .stat-card {
+        background: var(--color-bg-card);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        padding: var(--space-6);
+        transition: all 0.2s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+    
+    .stat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: var(--space-4);
+    }
+    
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+    
+    .stat-icon.reservations {
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+    }
+    
+    .stat-icon.revenue {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+    
+    .stat-icon.upcoming {
+        background: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+    }
+    
+    .stat-value {
+        font-size: var(--text-3xl);
+        font-weight: 700;
+        margin-bottom: var(--space-1);
+    }
+    
+    .stat-label {
+        color: var(--color-text-secondary);
+        font-size: var(--text-sm);
+    }
+    
+    .stat-trend {
+        font-size: var(--text-sm);
+        font-weight: 500;
+    }
+    
+    .stat-trend.positive {
+        color: var(--color-success);
+    }
+    
+    .stat-trend.negative {
+        color: var(--color-danger);
+    }
+    
+    .recent-reservations {
+        background: var(--color-bg-card);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        padding: var(--space-6);
+    }
+    
+    .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: var(--space-6);
+    }
+    
+    .section-title {
+        font-size: var(--text-xl);
+        font-weight: 600;
+    }
+    
+    .reservation-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+    }
+    
+    .reservation-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: var(--space-4);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        transition: all 0.2s ease;
+    }
+    
+    .reservation-item:hover {
+        background: var(--color-bg-hover);
+    }
+    
+    .reservation-info {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+    }
+    
+    .reservation-status {
+        padding: var(--space-1) var(--space-3);
+        border-radius: var(--radius-full);
+        font-size: var(--text-xs);
+        font-weight: 500;
+    }
+    
+    .reservation-status.pending {
+        background: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+    }
+    
+    .reservation-status.confirmed {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+    
+    .reservation-status.cancelled {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+    }
+    
+    @media (max-width: 992px) {
+        .sidebar {
+            width: 70px;
+        }
+        
+        .sidebar-section-title,
+        .sidebar-link span {
+            display: none;
+        }
+        
+        .main-content {
+            margin-left: 70px;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .sidebar {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar.active {
+            transform: translateX(0);
+        }
+        
+        .main-content {
+            margin-left: 0;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container-fluid mt-5 mb-5">
-    <!-- Welcome Section -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card bg-primary text-white shadow-lg">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h2><i class="fas fa-user-circle"></i> Welcome, {{ user.first_name|default:user.username }}!</h2>
-                            <p class="mb-0">Here's what's happening with your reservations</p>
-                        </div>
-                        <div style="font-size: 4rem;">
-                            <i class="fas fa-utensils"></i>
-                        </div>
+<div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="{% url 'landing' %}" class="sidebar-logo">
+                <div class="sidebar-logo-icon">B</div>
+                <span>BRONLY</span>
+            </a>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Menu</div>
+                <div class="sidebar-menu">
+                    <a href="{% url 'dashboard:customer' %}" class="sidebar-link active">
+                        <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"/>
+                            <rect x="14" y="3" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/>
+                        </svg>
+                        <span>Overview</span>
+                    </a>
+                    <a href="{% url 'restaurant_list' %}" class="sidebar-link">
+                        <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                        <span>Restaurants</span>
+                    </a>
+                    <a href="{% url 'reservations:customer_list' %}" class="sidebar-link">
+                        <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                        <span>My Reservations</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Settings</div>
+                <div class="sidebar-menu">
+                    <a href="{% url 'dashboard:settings' %}" class="sidebar-link">
+                        <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+                        </svg>
+                        <span>Settings</span>
+                    </a>
+                    <a href="{% url 'auth:logout' %}" class="sidebar-link">
+                        <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+                            <polyline points="16 17 21 12 16 7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">Dashboard</h1>
+            <p class="dashboard-subtitle">Welcome back, {{ user.first_name|default:user.username }}!</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon reservations">
+                        <i class="fas fa-calendar-check"></i>
                     </div>
                 </div>
+                <div class="stat-value">{{ reservation_stats.total }}</div>
+                <div class="stat-label">Total Reservations</div>
+                <div class="stat-trend positive">+{{ reservation_stats.this_month }} this month</div>
             </div>
-        </div>
-    </div>
-
-    <!-- Upcoming Reservations -->
-    <div class="row">
-        <div class="col-md-6 mb-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0">
-                        <i class="fas fa-calendar-check"></i> Upcoming Reservations
-                    </h5>
-                </div>
-                <div class="card-body">
-                    {% if upcoming_reservations %}
-                        <div class="list-group list-group-flush">
-                            {% for reservation in upcoming_reservations %}
-                                <div class="list-group-item">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1">{{ reservation.table.restaurant.name }}</h6>
-                                        <small class="badge bg-success">{{ reservation.status|title }}</small>
-                                    </div>
-                                    <p class="mb-1">
-                                        <i class="fas fa-calendar-alt"></i> {{ reservation.reservation_date|date:"M d, Y" }}
-                                        <strong>@</strong> {{ reservation.reservation_time|time:"H:i" }}
-                                    </p>
-                                    <small class="text-muted">
-                                        <i class="fas fa-chair"></i> Table {{ reservation.table.table_number }} •
-                                        <i class="fas fa-users"></i> {{ reservation.guest_count }} guests
-                                    </small>
-                                </div>
-                            {% endfor %}
-                        </div>
-                        <a href="{% url 'reservations:list' %}" class="btn btn-sm btn-outline-success w-100 mt-3">
-                            <i class="fas fa-list"></i> View All Reservations
-                        </a>
-                    {% else %}
-                        <div class="alert alert-info mb-0">
-                            <i class="fas fa-info-circle"></i> No upcoming reservations
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-
-        <!-- Past Reservations -->
-        <div class="col-md-6 mb-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-info text-white">
-                    <h5 class="mb-0">
-                        <i class="fas fa-history"></i> Past Reservations
-                    </h5>
-                </div>
-                <div class="card-body">
-                    {% if past_reservations %}
-                        <div class="list-group list-group-flush">
-                            {% for reservation in past_reservations %}
-                                <div class="list-group-item">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1">{{ reservation.table.restaurant.name }}</h6>
-                                        <small class="badge bg-secondary">Completed</small>
-                                    </div>
-                                    <p class="mb-1">
-                                        <i class="fas fa-calendar-alt"></i> {{ reservation.reservation_date|date:"M d, Y" }}
-                                        <strong>@</strong> {{ reservation.reservation_time|time:"H:i" }}
-                                    </p>
-                                    <small class="text-muted">
-                                        <i class="fas fa-chair"></i> Table {{ reservation.table.table_number }} •
-                                        <i class="fas fa-users"></i> {{ reservation.guest_count }} guests
-                                    </small>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <div class="alert alert-info mb-0">
-                            <i class="fas fa-info-circle"></i> No past reservations yet
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header bg-secondary text-white">
-                    <h5 class="mb-0"><i class="fas fa-bolt"></i> Quick Actions</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <a href="{% url 'restaurant_list' %}" class="btn btn-outline-primary w-100 mb-2">
-                                <i class="fas fa-search"></i> Browse Restaurants
-                            </a>
-                        </div>
-                        <div class="col-md-6">
-                            <a href="{% url 'reservations:list' %}" class="btn btn-outline-info w-100 mb-2">
-                                <i class="fas fa-list"></i> My Reservations
-                            </a>
-                        </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon revenue">
+                        <i class="fas fa-dollar-sign"></i>
                     </div>
                 </div>
+                <div class="stat-value">${{ reservation_stats.total_spent|floatformat:0 }}</div>
+                <div class="stat-label">Total Spent</div>
+                <div class="stat-trend positive">+{{ reservation_stats.recent_growth }}% from last month</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon upcoming">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                </div>
+                <div class="stat-value">{{ reservation_stats.upcoming }}</div>
+                <div class="stat-label">Upcoming Reservations</div>
+                <div class="stat-trend">Next 7 days</div>
             </div>
         </div>
-    </div>
+
+        <!-- Recent Reservations -->
+        <div class="recent-reservations">
+            <div class="section-header">
+                <h2 class="section-title">Recent Reservations</h2>
+                <a href="{% url 'reservations:customer_list' %}" class="btn btn-outline">View All</a>
+            </div>
+            
+            {% if recent_reservations %}
+                <div class="reservation-list">
+                    {% for reservation in recent_reservations %}
+                        <div class="reservation-item">
+                            <div class="reservation-info">
+                                <div>
+                                    <h3>{{ reservation.table.restaurant.name }}</h3>
+                                    <p class="text-muted">Table {{ reservation.table.table_number }} • {{ reservation.guest_count }} guests</p>
+                                    <p class="text-muted">{{ reservation.reservation_date|date:"M d, Y" }} at {{ reservation.reservation_time|time:"H:i" }}</p>
+                                </div>
+                            </div>
+                            <div class="reservation-actions">
+                                <span class="reservation-status {{ reservation.status }}">{{ reservation.get_status_display }}</span>
+                                {% if reservation.status == 'pending' %}
+                                    <a href="{% url 'reservations:cancel' reservation.id %}" class="btn btn-sm btn-outline-danger">Cancel</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-calendar-plus" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+                    <h3>No reservations yet</h3>
+                    <p class="text-muted">Start booking restaurants to see your reservations here</p>
+                    <a href="{% url 'restaurant_list' %}" class="btn btn-primary">Browse Restaurants</a>
+                </div>
+            {% endif %}
+        </div>
+    </main>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize dashboard animations
+        const statCards = document.querySelectorAll('.stat-card');
+        statCards.forEach((card, index) => {
+            setTimeout(() => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'all 0.5s ease';
+                
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100);
+            }, index * 100);
+        });
+        
+        // Add hover effects to sidebar links
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+        sidebarLinks.forEach(link => {
+            link.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateX(5px)';
+            });
+            
+            link.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateX(0)';
+            });
+        });
+    });
+</script>
 {% endblock %}

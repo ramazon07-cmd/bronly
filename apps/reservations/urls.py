@@ -46,4 +46,10 @@ urlpatterns = [
     # DEPOSIT ROUTES
     # ========================================================================
     path("<int:reservation_id>/deposit/", views.reservation_deposit, name="deposit"),
+    
+    # ========================================================================
+    # AJAX API ROUTES
+    # ========================================================================
+    path("api/availability/", views.check_availability_ajax, name="check_availability"),
+    path("api/create/", views.create_reservation_ajax, name="create_reservation_ajax"),
 ]

@@ -161,6 +161,19 @@ def owner_settings(request):
 
 @login_required(login_url='auth:login')
 @require_http_methods(["GET"])
+def customer_settings(request):
+    """Customer settings."""
+    # Get customer profile
+    customer_profile = getattr(request.user, 'customer_profile', None)
+    if not customer_profile:
+        return HttpResponseForbidden('You do not have permission to access this page.')
+    
+    context = {'customer_profile': customer_profile}
+    return render(request, 'dashboards/customer_settings.html', context)
+
+
+@login_required(login_url='auth:login')
+@require_http_methods(["GET"])
 def owner_subscription(request):
     """Manage subscription."""
     context = {}
